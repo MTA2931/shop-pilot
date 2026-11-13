@@ -1,0 +1,55 @@
+# Copyright © 2026 MTA Company. All rights reserved.
+# Code by MTA Company.
+
+# --- Secrets -----------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# --- Databases ---------------------------------------------------------------
+*.db
+*.sqlite
+*.sqlite3
+instance/
+data/
+
+# --- Python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# --- Virtualenvs -------------------------------------------------------------
+venv/
+.venv/
+env/
+ENV/
+
+# --- Tests / tooling ---------------------------------------------------------
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# --- Logs --------------------------------------------------------------------
+*.log
+/logs/
+
+# --- Editors / OS ------------------------------------------------------------
+.vscode/
+.idea/
+*.swp
+Thumbs.db
+desktop.ini
+
+# --- Generated exports -------------------------------------------------------
+exports/
