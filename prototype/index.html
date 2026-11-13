@@ -1,0 +1,323 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>آنلاین شاپ | داشبورد</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <style>
+        :root{
+        --bg:#f5f7f4; --card:#fff; --line:#e4e9e4; --text:#1a2420; --muted:#7d8781;
+        --green:#2e8b5e; --green-soft:#e4f3ea; --orange:#c2751a; --orange-soft:#fdf0dc;
+        --red:#d03b3b; --red-soft:#fde8e8; --side:#17251f; --side-2:#1f3028; --side-text:#cfd8d2;
+        --bar:#c5dfd0; --ring:#e4f3ea; --input:#fff;
+        }
+        :root[data-theme="dark"]{
+        --bg:#0f1713; --card:#16211b; --line:#25342c; --text:#e8efea; --muted:#8c9a92;
+        --green-soft:#1d3a2b; --orange-soft:#3a2b14; --red-soft:#3b1d1d; --bar:#2c4a39; --ring:#1d3a2b; --input:#16211b;
+        }
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+        body{font-family:'Vazirmatn',Tahoma,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+        a{color:inherit;text-decoration:none}
+        button,input,select{font:inherit;color:inherit}
+        :focus-visible{outline:2px solid var(--green);outline-offset:2px}
+
+        .layout{display:grid;grid-template-columns:256px 1fr;min-height:100vh}
+
+        /* Sidebar */
+        .sidebar{background:var(--side);color:var(--side-text);padding:24px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;overflow-y:auto;border-radius:0 0 0 24px}
+        .brand{display:flex;align-items:center;gap:12px;padding:0 8px 24px;border-bottom:1px solid #2c3d34}
+        .brand-logo{width:66px;height:66px;border-radius:50%;background:#fff;display:grid;place-items:center;color:#e0357f;font-size:28px;flex:none}
+        .brand h1{font-size:18px;font-weight:800;color:#fff}
+        .brand p{font-size:10px;color:#9fb0a6;margin-top:4px}
+        .nav-label{font-size:11px;color:#9fb0a6;padding:0 8px;margin:24px 0 10px}
+        .nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;font-size:14px;margin-bottom:6px;color:var(--side-text);transition:background .15s}
+        .nav a:hover{background:var(--side-2)}
+        .nav a.active{background:var(--green);color:#fff;font-weight:700}
+        .nav a i{width:18px;text-align:center;font-size:15px;opacity:.85}
+        .nav .badge{margin-inline-start:auto;background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px}
+        .nav.shop a{color:#aab9b0}
+        .sidebar hr{border:0;border-top:1px solid #2c3d34;margin-top:18px}
+        .side-foot{margin-top:auto;background:var(--side-2);border-radius:12px;padding:18px 16px;border:1px solid #2c3d34}
+        .side-foot strong{display:block;font-size:12px;color:#fff;margin-bottom:10px}
+        .side-foot span{font-size:10px;color:#8fa196}
+
+        /* Topbar */
+        .main{min-width:0}
+        .topbar{display:flex;align-items:center;gap:16px;padding:18px 32px;border-bottom:1px solid #1a2420;background:var(--card)}
+        .user{display:flex;align-items:center;gap:12px}
+        .avatar{width:48px;height:48px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:700;font-size:18px}
+        .user b{display:block;font-size:13px;font-weight:500}
+        .user small{font-size:11px;color:var(--muted)}
+        .actions{margin-inline-start:auto;display:flex;align-items:center;gap:16px;flex-direction:row}
+        .search{position:relative}
+        .search input{width:300px;max-width:100%;height:42px;border:1px solid var(--line);background:var(--input);border-radius:8px;padding:0 14px;font-size:12px}
+        .search input::placeholder{color:var(--muted)}
+        .icon-btn{width:42px;height:42px;border:1px solid var(--line);background:var(--input);border-radius:8px;cursor:pointer;color:var(--muted);font-size:16px}
+
+        /* Content */
+        .content{padding:24px 32px 40px;display:grid;gap:24px}
+        .page-head{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+        .page-head h2{font-size:26px;font-weight:800}
+        .page-head p{color:var(--muted);margin-top:8px;font-size:13px}
+        .btn{background:var(--green);color:#fff;border:0;border-radius:10px;padding:0 28px;height:44px;font-weight:700;font-size:13px;cursor:pointer;transition:filter .15s}
+        .btn:hover{filter:brightness(1.08)}
+
+        .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+        .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+        .stat-head{display:flex;align-items:center;gap:12px}
+        .stat-ico{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:var(--green-soft);color:var(--green)}
+        .stat-ico.warn{background:var(--orange-soft);color:var(--orange)}
+        .stat-head span{font-size:13px;color:var(--muted)}
+        .stat-val{display:flex;align-items:baseline;gap:6px;margin-top:10px}
+        .stat-val strong{font-size:26px;font-weight:800}
+        .stat-val small{font-size:11px;color:var(--muted)}
+        .stat-note{font-size:11px;margin-top:8px;color:var(--green)}
+        .stat-note.warn{color:var(--orange)}
+
+        .row{display:grid;gap:24px}
+        .row.two{grid-template-columns:1fr 420px}
+        .card-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:6px}
+        .card-head h3{font-size:16px;font-weight:700}
+        .card-head p,.sub{font-size:11px;color:var(--muted);margin-top:8px}
+        .link{color:var(--green);font-size:11px;font-weight:500;margin-top:6px}
+        select{height:34px;border:0;background:var(--bg);border-radius:8px;padding:0 12px;font-size:11px;cursor:pointer}
+
+        .total{font-size:22px;font-weight:800;margin:18px 0 4px 0}
+        .total small{font-size:18px}
+        .trend{font-size:11px;color:var(--green)}
+        .bars{height:150px;margin-top:24px;display:flex;align-items:flex-end;justify-content:space-between;gap:40px;padding:0 20px;border-bottom:1px solid var(--line);background:linear-gradient(var(--line) 1px,transparent 1px) 0 0/100% 50% repeat-y}
+        .bar{flex:1;background:var(--bar);border-radius:6px 6px 0 0;transition:filter .15s}
+        .bar:hover{filter:brightness(.92)}
+        .bar.top{background:var(--green)}
+        .days{display:flex;justify-content:space-between;gap:40px;padding:10px 20px 0;font-size:11px;color:var(--muted)}
+        .days span{flex:1;text-align:center}
+
+        .donut-wrap{display:flex;align-items:center;justify-content:center;gap:48px;padding:36px 0 28px}
+        .donut{width:146px;height:146px;border-radius:50%;background:conic-gradient(var(--green) 0 63%,var(--orange) 63% 100%);display:grid;place-items:center;opacity:.9}
+        .donut div{width:90px;height:90px;border-radius:50%;background:var(--card);display:grid;place-items:center;text-align:center;line-height:1.2}
+        .donut strong{font-size:24px;font-weight:800;display:block}
+        .donut small{font-size:10px;color:var(--muted)}
+        .legend{display:grid;gap:22px}
+        .legend li{list-style:none;display:flex;gap:12px;align-items:flex-start}
+        .dot{width:9px;height:9px;border-radius:50%;margin-top:6px;flex:none}
+        .legend b{font-size:13px;display:block}
+        .legend small{font-size:10px;color:var(--muted)}
+        .note{border-top:1px solid var(--line);padding-top:18px;font-size:10px;color:var(--muted)}
+
+        /* Orders table */
+        .table-wrap{overflow-x:auto;margin-top:12px}
+        table{width:100%;border-collapse:collapse;min-width:520px}
+        th{font-size:11px;font-weight:400;color:var(--muted);text-align:right;padding:14px 8px;border-bottom:1px solid var(--line)}
+        td{padding:14px 8px;font-size:12px;border-bottom:1px solid var(--line)}
+        tr:last-child td{border-bottom:0}
+        td.mono{font-weight:500;direction:ltr;text-align:right}
+        td.ch{color:var(--muted);font-size:11px}
+        .pill{display:block;text-align:center;font-size:10px;padding:7px 10px;border-radius:8px;width:120px}
+        .pill.green{background:var(--green-soft);color:var(--green)}
+        .pill.orange{background:var(--orange-soft);color:var(--orange)}
+        .pill.red{background:var(--red-soft);color:var(--red)}
+
+        /* Stock */
+        .stock{display:grid;gap:20px;margin:22px 0}
+        .item{display:flex;align-items:center;gap:14px}
+        .thumb{width:42px;height:42px;border-radius:8px;background:var(--bg);display:grid;place-items:center;color:var(--muted);font-size:16px;flex:none}
+        .thumb.alert{background:var(--red-soft);color:var(--red)}
+        .item-info{flex:1}
+        .item-info b{font-size:12px;display:block;font-weight:500}
+        .item-info small{font-size:10px;color:var(--muted)}
+        .qty{font-size:11px;font-weight:700;padding:6px 14px;border-radius:6px}
+        .qty.red{background:var(--red-soft);color:var(--red)}
+        .qty.orange{background:var(--orange-soft);color:var(--orange)}
+
+        @media (max-width:1200px){.stats{grid-template-columns:repeat(2,1fr)}.row.two{grid-template-columns:1fr}}
+        @media (max-width:860px){
+        .layout{grid-template-columns:1fr}
+        .sidebar{position:static;height:auto;border-radius:0}
+        .topbar,.content{padding-inline:16px}
+        .search input{width:200px}
+        }
+        @media (max-width:560px){.stats{grid-template-columns:1fr}.donut-wrap{flex-direction:column;gap:24px}.bars,.days{gap:12px}}
+    </style>
+</head>
+<body>
+    <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+        <div class="brand-logo"><i class="fa-solid fa-bag-shopping"></i></div>
+        <div>
+            <h1>آنلاین شاپ</h1>
+            <p>مدیریت هوشمند فروشگاه</p>
+        </div>
+        </div>
+
+        <div class="nav-label">منوی اصلی</div>
+        <nav class="nav">
+        <a href="#" class="active"><i class="fa-solid fa-table-columns"></i>داشبورد</a>
+        <a href="#"><i class="fa-solid fa-cart-shopping"></i>سفارش‌ها<span class="badge">۱۲</span></a>
+        <a href="#"><i class="fa-solid fa-box"></i>محصولات</a>
+        <a href="#"><i class="fa-solid fa-warehouse"></i>موجودی انبار</a>
+        <a href="#"><i class="fa-solid fa-users"></i>مشتریان</a>
+        <a href="#"><i class="fa-regular fa-credit-card"></i>پرداخت‌ها</a>
+        <a href="#"><i class="fa-solid fa-truck-fast"></i>ارسال‌ها</a>
+        <a href="#"><i class="fa-solid fa-chart-column"></i>گزارش‌ها</a>
+        </nav>
+
+        <hr>
+        <div class="nav-label">فروشگاه من</div>
+        <nav class="nav shop">
+        <a href="#"><i class="fa-solid fa-globe"></i>وبسایت فروشگاه</a>
+        <a href="#"><i class="fa-solid fa-percent"></i>تخفیف‌ها</a>
+        <a href="#"><i class="fa-solid fa-gear"></i>تنظیمات</a>
+        </nav>
+
+        <div class="side-foot" style="margin-top:32px">
+        <strong>© تمام حقوق این سایت محفوظ است</strong>
+        <span>توسعه داده شده توسط امتای</span>
+        </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+        <header class="topbar">
+        <div class="user">
+            <div class="avatar">م</div>
+            <div><b>مدیر فروشگاه</b><small>مالک</small></div>
+        </div>
+        <div class="actions">
+            <div class="search">
+            <input type="search" id="search" placeholder="جست‌وجوی سفارش، مشتری یا محصول" aria-label="جست‌وجو">
+            </div>
+            <button class="icon-btn" id="theme" aria-label="تغییر تم"><i class="fa-regular fa-moon"></i></button>
+        </div>
+        </header>
+
+        <main class="content">
+        <div class="page-head">
+            <div>
+            <h2>نمای کلی فروشگاه</h2>
+            <p>سلام! این خلاصه وضعیت فروشگاه شماست.</p>
+            </div>
+            <button class="btn" type="button">+ ثبت سفارش جدید</button>
+        </div>
+
+        <!-- Stats -->
+        <section class="stats">
+            <article class="card">
+            <div class="stat-head"><div class="stat-ico"><i class="fa-regular fa-circle-user"></i></div><span>مشتریان</span></div>
+            <div class="stat-val"><strong>۲۴</strong><small>مشتری</small></div>
+            <div class="stat-note">در ۷ روز گذشته</div>
+            </article>
+            <article class="card">
+            <div class="stat-head"><div class="stat-ico warn"><i class="fa-regular fa-clock"></i></div><span>در انتظار پرداخت</span></div>
+            <div class="stat-val"><strong>۱۲</strong><small>سفارش</small></div>
+            <div class="stat-note warn">نیازمند بررسی</div>
+            </article>
+            <article class="card">
+            <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-check-double"></i></div><span>سفارش‌های امروز</span></div>
+            <div class="stat-val"><strong>۳۸</strong><small>سفارش</small></div>
+            <div class="stat-note">↑ ۸ سفارش بیشتر</div>
+            </article>
+            <article class="card">
+            <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-arrow-trend-up"></i></div><span>فروش امروز</span></div>
+            <div class="stat-val"><strong>۱۲,۸۵۰,۰۰۰</strong><small>تومان</small></div>
+            <div class="stat-note">↑ ۱۲٪ نسبت به دیروز</div>
+            </article>
+        </section>
+
+        <!-- Chart + Channels -->
+        <section class="row two">
+            <article class="card">
+            <div class="card-head">
+                <div><h3>روند فروش</h3><p>میزان فروش در ۷ روز گذشته</p></div>
+                <select aria-label="بازه زمانی"><option>۷ روز اخیر</option><option>۳۰ روز اخیر</option></select>
+            </div>
+            <div class="total">۸۴,۶۵۰,۰۰۰ <small>تومان</small></div>
+            <div class="trend">↑ ۱۸.۴٪</div>
+            <div class="bars" role="img" aria-label="نمودار ستونی فروش هفتگی">
+                <div class="bar top" style="height:136px"></div>
+                <div class="bar" style="height:118px"></div>
+                <div class="bar" style="height:78px"></div>
+                <div class="bar" style="height:94px"></div>
+                <div class="bar" style="height:60px"></div>
+                <div class="bar" style="height:72px"></div>
+                <div class="bar" style="height:48px"></div>
+            </div>
+            <div class="days"><span>ج</span><span>پ</span><span>چ</span><span>س</span><span>د</span><span>ی</span><span>ش</span></div>
+            </article>
+
+            <article class="card">
+            <div class="card-head"><div><h3>کانال‌های فروش</h3><p>سهم هر کانال از سفارش‌ها</p></div></div>
+            <div class="donut-wrap">
+                <ul class="legend">
+                <li><span class="dot" style="background:var(--green)"></span><div><b>وبسایت ۶۳٪</b><small>۲۴ سفارش</small></div></li>
+                <li><span class="dot" style="background:var(--orange)"></span><div><b>اینستاگرام ۳۷٪</b><small>۱۴ سفارش</small></div></li>
+                </ul>
+                <div class="donut"><div><span><strong>۳۸</strong><small>سفارش</small></span></div></div>
+            </div>
+            <p class="note">سفارش‌ها از هر دو کانال در یک پنل مدیریت می‌شوند.</p>
+            </article>
+        </section>
+
+        <!-- Orders + Stock -->
+        <section class="row two">
+            <article class="card">
+            <div class="card-head"><h3>آخرین سفارش‌ها</h3><a class="link" href="#">← مشاهده همه</a></div>
+            <div class="table-wrap">
+                <table>
+                <thead><tr><th>شماره سفارش</th><th>مشتری</th><th>مبلغ</th><th>کانال</th><th>وضعیت</th></tr></thead>
+                <tbody id="orders">
+                    <tr><td class="mono">#1048</td><td>نگار محمدی</td><td>۲,۴۵۰,۰۰۰</td><td class="ch">وبسایت</td><td><span class="pill orange">در حال پردازش</span></td></tr>
+                    <tr><td class="mono">#1047</td><td>آرزو کریمی</td><td>۱,۸۹۰,۰۰۰</td><td class="ch">اینستاگرام</td><td><span class="pill green">پرداخت‌شده</span></td></tr>
+                    <tr><td class="mono">#1046</td><td>سارا احمدی</td><td>۳,۲۰۰,۰۰۰</td><td class="ch">وبسایت</td><td><span class="pill green">ارسال‌شده</span></td></tr>
+                    <tr><td class="mono">#1045</td><td>مریم رضایی</td><td>۹۸۰,۰۰۰</td><td class="ch">اینستاگرام</td><td><span class="pill red">در انتظار پرداخت</span></td></tr>
+                </tbody>
+                </table>
+            </div>
+            </article>
+
+            <article class="card">
+            <div class="card-head"><h3>هشدار موجودی کالا</h3><a class="link" href="#">← مدیریت انبار</a></div>
+            <div class="stock">
+                <div class="item"><div class="thumb alert"><i class="fa-solid fa-plus"></i></div><div class="item-info"><b>کفش اسپرت مدل نوا</b><small>SKU-2048 · سایز ۳۸</small></div><span class="qty red">۲ عدد</span></div>
+                <div class="item"><div class="thumb"><i class="fa-solid fa-plus"></i></div><div class="item-info"><b>کیف دوشی مینیمال</b><small>SKU-1982 · مشکی</small></div><span class="qty orange">۴ عدد</span></div>
+                <div class="item"><div class="thumb"><i class="fa-solid fa-plus"></i></div><div class="item-info"><b>شومیز لینن</b><small>SKU-1750 · سفید</small></div><span class="qty orange">۵ عدد</span></div>
+            </div>
+            <p class="note">اگر کالا ناموجود شد، ثبت سفارش آن کالا ممکن نیست.</p>
+            </article>
+        </section>
+        </main>
+    </div>
+    </div>
+
+    <script>
+    // Theme toggle
+    const root = document.documentElement, themeBtn = document.getElementById('theme');
+    try { const t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (e) {}
+    const syncIcon = () => themeBtn.innerHTML = root.dataset.theme === 'dark'
+        ? '<i class="fa-regular fa-sun"></i>' : '<i class="fa-regular fa-moon"></i>';
+    syncIcon();
+    themeBtn.addEventListener('click', () => {
+        root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+        try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
+        syncIcon();
+    });
+
+    // Filter the orders table by search text
+    document.getElementById('search').addEventListener('input', e => {
+        const q = e.target.value.trim();
+        document.querySelectorAll('#orders tr').forEach(tr => {
+        tr.style.display = tr.textContent.includes(q) ? '' : 'none';
+        });
+    });
+    </script>
+</body>
+</html>
+
