@@ -34,11 +34,11 @@ class Config:
     # Security / secret key
     # ------------------------------------------------------------------
     SECRET_KEY = os.environ.get("SECRET_KEY")
-    if not SECRET_KEY and not DEBUG and not TESTING:
-        raise RuntimeError(
-            "SECRET_KEY environment variable must be set in production."
-        )
     if not SECRET_KEY:
+        if FLASK_ENV == "production":
+            raise RuntimeError(
+                "SECRET_KEY environment variable must be set in production."
+            )
         SECRET_KEY = "dev-secret-key-change-me-in-production"
 
     WTF_CSRF_ENABLED = True
