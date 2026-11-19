@@ -35,7 +35,7 @@ class Config:
     # ------------------------------------------------------------------
     SECRET_KEY = os.environ.get("SECRET_KEY")
     if not SECRET_KEY:
-        if FLASK_ENV == "production":
+        if not DEBUG and not TESTING:
             raise RuntimeError(
                 "SECRET_KEY environment variable must be set in production."
             )
