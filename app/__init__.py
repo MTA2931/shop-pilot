@@ -24,7 +24,7 @@ from flask_wtf.csrf import CSRFError
 from werkzeug.security import check_password_hash
 
 from config import config_by_name
-from app.extensions import db, migrate, login_manager, limiter
+from app.extensions import db, migrate, login_manager, limiter, csrf
 from app.models.administrator import Administrator
 from app.services.logging_service import log_activity
 
@@ -58,6 +58,7 @@ def create_app(config_name=None):
     migrate.init_app(app, db)
     login_manager.init_app(app)
     login_manager.anonymous_user = AnonymousUser
+    csrf.init_app(app)
     limiter.init_app(app)
 
     # Register blueprints
