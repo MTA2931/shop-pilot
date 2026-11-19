@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title }}موجودی انبار - {{ shop_name }}{% endblock %}
+
+{% block page_title %}موجودی انبار{% endblock %}
+{% block page_subtitle %}مراقبه و مدیریت موجودی کالاهای انبار{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('inventory.movements') }}" class="btn">تاریخچه تغییرات موجودی</a>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom:24px;">
+    <div class="stats" style="gap:12px;">
+        <article class="card" style="padding:16px;">
+            <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-boxes"></i></div><span>کل کالاهای انبار</span></div>
+            <div class="stat-val"><strong>{{ stats.total_items }}</strong><small>محصول</small></div>
+        </article>
+        <article class="card" style="padding:16px;">
+            <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-check"></i></div><span>موجود در انبار</span></div>
+            <div class="stat-val"><strong>{{ stats.total_quantity }}</strong><small>عدد</small></div>
+        </article>
