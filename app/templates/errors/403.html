@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title }}دسترسی محدود - {{ shop_name }}{% endblock %}
+
+{% block page_title %}دسترسی محدود{% endblock %}
+{% block page_subtitle %}شما به این صفحه دسترسی ندارید.{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 40px auto; text-align: center;">
+    <div class="stat-ico" style="background: var(--red-soft); color: var(--red); margin: 0 auto 20px;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 24px;"></i>
+    </div>
+    <h3>خطای ۴۰۳ - دسترسی محدود</h3>
+    <p class="muted">شما مجاز به دسترسی به این صفحه نیستید.</p>
+    {% if message %}
+    <p>{{ message }}</p>
+    {% endif %}
+    <a href="{{ url_for('dashboard.index') }}" class="btn">بازگشت به داشبورد</a>
+</div>
+{% endblock %}

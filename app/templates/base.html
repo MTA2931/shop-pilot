@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ shop_title }}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body data-theme="{% if session.theme %}{{ session.theme }}{% else %}light{% endif %}">
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="brand-logo"><i class="fa-solid fa-bag-shopping"></i></div>
+                <div>
+                    <h1>{{ shop_name }}</h1>
+                    <p>{{ shop_description }}</p>
+                </div>
+            </div>
+
+            <div class="nav-label">پایه</div>
+            <nav class="nav">
+                <a href="{{ url_for('dashboard.index') }}" class="{% if request.endpoint == 'dashboard.index' %}active{% endif %}">
+                    <i class="fa-solid fa-table-columns"></i>داشبورد
+                </a>
+                <a href="{{ url_for('orders.index') }}" class="{% if request.endpoint and request.endpoint.startswith('orders.') %}active{% endif %}">
+                    <i class="fa-solid fa-cart-shopping"></i>سفارش‌ها
+                </a>
+                <a href="{{ url_for('products.index') }}" class="{% if request.endpoint and request.endpoint.startswith('products.') %}active{% endif %}">
+                    <i class="fa-solid fa-box"></i>محصولات
+                </a>
+                <a href="{{ url_for('inventory.index') }}" class="{% if request.endpoint and request.endpoint.startswith('inventory.') %}active{% endif %}">
+                    <i class="fa-solid fa-warehouse"></i>موجودی انبار
+                </a>
+                <a href="{{ url_for('reports.index') }}" class="{% if request.endpoint and request.endpoint.startswith('reports.') %}active{% endif %}">
+                    <i class="fa-solid fa-chart-column"></i>گزارش‌ها
+                </a>
+            </nav>
+            <hr>
+
+            <div class="nav-label">سیستم</div>
+            <nav class="nav">
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('administrators.index') }}" class="{% if request.endpoint and request.endpoint.startswith('administrators.') %}active{% endif %}">
+                    <i class="fa-solid fa-users-gear"></i>مدیریت ادمین‌ها
+                </a>
+                {% endif %}
+                {% if current_user.is_admin() %}
+                <a href="{{ url_for('logs.index') }}" class="{% if request.endpoint and request.endpoint.startswith('logs.') %}active{% endif %}">
+                    <i class="fa-solid fa-file-contract"></i>لاگ‌ها
+                </a>
+                {% endif %}
+                <a href="{{ url_for('settings.profile') }}" class="{% if request.endpoint and request.endpoint.startswith('settings.') %}active{% endif %}">
+                    <i class="fa-regular fa-user"></i>تنظیمات حساب
+                </a>
+                <a href="{{ url_for('auth.logout') }}">
+                    <i class="fa-solid fa-right-from-bracket"></i>خروج
+                </a>
+            </nav>
+
+            <div class="side-foot">
+                <strong>© تمام حقوق این سایت محفوظ است</strong>
+                <span>توسعه داده شده توسط MTA</span>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="main">
+            <header class="topbar">
+                <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="باز کردن منو">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+                <div class="user">
+                    <div class="avatar">{{ current_user.username[0]|upper if current_user.is_authenticated else 'M' }}</div>
+                    <div>
+                        <b>{{ current_user.username if current_user.is_authenticated else 'مدیر' }}</b>
+                        <small>{{ current_user.role_label if current_user.is_authenticated else '' }}</small>
+                    </div>
+                </div>
+                <div class="actions">
+                    <div class="search">
+                        <input type="search" id="topbarSearch" placeholder="جست‌وجو..." aria-label="جست‌وجو">
+                    </div>
+                    <button class="icon-btn" id="theme" aria-label="تغییر تم">
+            <main class="content">
+                <div class="page-head">
+                    <div>
+                        <h2>{% block page_title %}داشبورد{% endblock %}</h2>
+                        <p>{% block page_subtitle %}{% endblock %}</p>
+                    </div>
+                    {% block page_actions %}{% endblock %}
+                </div>
+
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                        <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% endwith %}
+
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile menu overlay -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
+                        <i class="fa-regular fa-moon"></i>
+                    </button>
+                    <button class="icon-btn" id="userMenuBtn" aria-label="منوی کاربر">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+            </header>

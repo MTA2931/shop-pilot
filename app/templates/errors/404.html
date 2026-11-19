@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title }}پیدا نشد - {{ shop_name }}{% endblock %}
+
+{% block page_title %}صفحه یافت نشد{% endblock %}
+{% block page_subtitle %}صفحه‌ای که به دنبال آن هستید موجود نیست.{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 500px; margin: 40px auto; text-align: center;">
+    <div class="stat-ico" style="background: var(--orange-soft); color: var(--orange); margin: 0 auto 20px;">
+        <i class="fa-solid fa-magnifying-glass" style="font-size: 24px;"></i>
+    </div>
+    <h3>خطای ۴۰۴ - صفحه یافت نشد</h3>
+    <p class="muted">آدرس درخواستی در سیستم پیدا نشد.</p>
+    <a href="{{ url_for('dashboard.index') }}" class="btn">بازگشت به داشبورد</a>
+</div>
+{% endblock %}
