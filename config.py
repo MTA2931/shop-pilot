@@ -33,13 +33,18 @@ class Config:
     # ------------------------------------------------------------------
     # Security / secret key
     # ------------------------------------------------------------------
-    SECRET_KEY = os.environ.get("SECRET_KEY")
-    if not SECRET_KEY:
-        if not DEBUG and not TESTING:
-            raise RuntimeError(
-                "SECRET_KEY environment variable must be set in production."
-            )
-        SECRET_KEY = "dev-secret-key-change-me-in-production"
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-key-change-me-in-production"
+
+    @classmethod
+    def validate(cls):
+        """Validate configuration. Call this after app creation."""
+        if not cls.DEBUG and not cls.TESTING:
+            if cls.SECRET_KEY == "dev-secret-key-change-me-in-production":
+                import os as _os
+                if not _os.environ.get("SECRET_KEY"):
+                    raise RuntimeError(
+                        "SECRET_KEY environment variable must be set in production."
+                    )
 
     WTF_CSRF_ENABLED = True
     WTF_CSRF_SECRET_KEY = os.environ.get("WTF_CSRF_SECRET_KEY", SECRET_KEY)
