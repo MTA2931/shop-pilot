@@ -1,0 +1,1 @@
+"""ShopPilot database models package."""
