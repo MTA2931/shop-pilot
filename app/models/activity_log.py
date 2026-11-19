@@ -18,7 +18,7 @@ class ActivityLog(db.Model):
     administrator_id = db.Column(
         db.Integer, db.ForeignKey("administrators.id"), nullable=True, index=True
     )
-    administrator = db.relationship("Administrator", backref="activity_logs", lazy="select")
+    administrator = db.relationship("Administrator", lazy="select", overlaps="activity_logs")
 
     action = db.Column(db.String(100), nullable=False, index=True)
     category = db.Column(

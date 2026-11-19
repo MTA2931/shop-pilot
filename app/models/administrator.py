@@ -50,7 +50,7 @@ class Administrator(db.Model):
 
     # Relationships
     activity_logs = db.relationship(
-        "ActivityLog", backref="administrator", lazy="dynamic", cascade="all, delete-orphan"
+        "ActivityLog", lazy="dynamic", cascade="all, delete-orphan"
     )
 
     # Role hierarchy for permission checks
