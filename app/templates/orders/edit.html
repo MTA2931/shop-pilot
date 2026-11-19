@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title }}ویرایش سفارش {{ order.order_number }} - {{ shop_name }}{% endblock %}
+
+{% block page_title %}ویرایش سفارش{% endblock %}
+{% block page_subtitle %}تغییر اطلاعات سفارش شماره {{ order.order_number }}{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('orders.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازگشت به لیست</a>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <form method="POST" action="{{ url_for('orders.edit', order_id=order.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">شماره سفارش</label>
+            <input type="text" class="form-control" value="{{ order.order_number }}" readonly style="background:var(--bg);">
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">نام مشتری</label>
+            <input type="text" name="customer_name" class="form-control" required
+                   value="{{ order_data.customer_name if order_data else order.customer_name }}">
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">تلفن مشتری</label>
+            <input type="tel" name="customer_phone" class="form-control"
+                   value="{{ order_data.customer_phone if order_data else order.customer_phone or '' }}">
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">آدرس</label>
+            <textarea name="customer_address" class="form-control">{{ order_data.customer_address if order_data else order.customer_address or '' }}</textarea>
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">توضیحات / محصولات</label>
+            <textarea name="description" class="form-control" required>{{ order_data.description if order_data else order.description or '' }}</textarea>
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">مبلغ کل (تومان)</label>
+            <input type="number" name="total_amount" class="form-control" required min="0"
+                   value="{{ order_data.total_amount if order_data else order.total_amount }}">
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">کانال فروش</label>
+            <select name="channel" class="form-control">
+                <option value="website" {% if order_data and order_data.channel == 'website' %}selected{% elif order.channel == 'website' %}selected{% endif %}>وبسایت</option>
+                <option value="instagram" {% if order_data and order_data.channel == 'instagram' %}selected{% elif order.channel == 'instagram' %}selected{% endif %}>اینستاگرام</option>
+                <option value="phone" {% if order_data and order_data.channel == 'phone' %}selected{% elif order.channel == 'phone' %}selected{% endif %}>تماس تلفنی</option>
+                <option value="other" {% if order_data and order_data.channel == 'other' %}selected{% elif order.channel == 'other' %}selected{% endif %}>سایر</option>
+            </select>
+        </div>
+
+        <div class="form-group" style="text-align: right;">
+            <label class="form-label">وضعیت</label>
+            <select name="status" class="form-control">
+                <option value="pending" {% if order_data and order_data.status == 'pending' %}selected{% elif order.status == 'pending' %}selected{% endif %}>در انتظار پرداخت</option>
+                <option value="processing" {% if order_data and order_data.status == 'processing' %}selected{% elif order.status == 'processing' %}selected{% endif %}>در حال پردازش</option>
+                <option value="completed" {% if order_data and order_data.status == 'completed' %}selected{% elif order.status == 'completed' %}selected{% endif %}>تکمیل‌شده</option>
+                <option value="cancelled" {% if order_data and order_data.status == 'cancelled' %}selected{% elif order.status == 'cancelled' %}selected{% endif %}>لغو‌شده</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">
+            <i class="fa-solid fa-save"></i> به‌روزرسانی سفارش
+        </button>
+    </form>
+</div>
+{% endblock %}

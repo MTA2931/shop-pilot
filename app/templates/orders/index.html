@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title }}سفارش‌ها - {{ shop_name }}{% endblock %}
+
+{% block page_title %}سفارش‌ها{% endblock %}
+{% block page_subtitle %>مدیریت و پیگیری سفارش‌های مشتریان{% endblock %}
+
+{% block page_actions %}
+<button class="btn" onclick="location.href='{{ url_for('orders.create') }}'">
+    <i class="fa-solid fa-plus"></i> سفارش جدید
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-head" style="flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+        <div>
+            <h3>لیست سفارش‌ها</h3>
+        </div>
+        <form method="GET" action="{{ url_for('orders.index') }}" style="display: flex; gap: 8px; flex-wrap: wrap; margin-inline-start: auto;">
+            <input type="search" name="search" placeholder="جست‌وجو..." value="{{ search }}" class="form-control" style="width: 220px; height: 34px; font-size: 11px;">
+            <select name="status" class="form-control" style="width: 140px; height: 34px;">
+                <option value="">همه وضعیت‌ها</option>
+                <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>در انتظار پرداخت</option>
+                <option value="processing" {% if status_filter == 'processing' %}selected{% endif %}>در حال پردازش</option>
+                <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>تکمیل‌شده</option>
+                <option value="cancelled" {% if status_filter == 'cancelled' %}selected{% endif %}>لغو‌شده</option>
+            </select>
+            <input type="date" name="date_from" value="{{ date_from }}" class="form-control" style="width: 130px; height: 34px;">
+            <input type="date" name="date_to" value="{{ date_to }}" class="form-control" style="width: 130px; height: 34px;">
+            <button type="submit" class="btn" style="height: 34px; padding: 0 16px; font-size: 11px;">جست‌وجو</button>
+            <a href="{{ url_for('orders.index') }}" class="btn" style="background: var(--line); color: var(--text); height: 34px; padding: 0 16px; font-size: 11px;">پاک‌سازی</a>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>شماره سفارش</th>
+                    <th>مشتری</th>
+                    <th>توضیحات</th>
+                    <th>مبلغ</th>
+                    <th>تاریخ</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td class="mono">{{ order.order_number }}</td>
+                    <td>{{ order.customer_name }}</td>
+                    <td>{{ order.description or '-' }}</td>
+                    <td>{{ order.total_amount }}</td>
+                    <td>{{ order.created_at[:10] if order.created_at else '-' }}</td>
+                    <td>
+                        <span class="pill {% if order.status == 'completed' %}green{% elif order.status == 'processing' %}orange{% elif order.status == 'cancelled' %}red{% else %}orange{% endif %}">
+                            {{ order.status_label }}
+                        </span>
+                    </td>
+                    <td>
+                        <select class="order-status-select" data-order-id="{{ order.id }}">
+                            <option value="">عملیات</option>
+                            <option value="view">مشاهده</option>
+                            <option value="edit">ویرایش</option>
+                            <option value="status">تغییر وضعیت</option>
+                            <option value="delete">حذف</option>
+                        </select>
+                        <form id="statusForm_{{ order.id }}" method="POST" action="{{ url_for('orders.change_status', order_id=order.id) }}" style="display:none;">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="hidden" name="status" value="">
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center; color:var(--muted); padding:30px;">
+                        <i class="fa-solid fa-inbox" style="font-size:32px; margin-bottom:12px; opacity:0.5;"></i>
+                        <div>سفارشی یافت نشد.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if pagination.pages > 1 %}
+    <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('orders.index', page=pagination.prev_num, search=search, status_filter=status_filter, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg); color:var(--text); height:34px; padding:0 16px; font-size:12px;">قبلی</a>
+        {% endif %}
+        <span style="font-size:12px; color:var(--muted);">صفحه {{ pagination.page }} از {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('orders.index', page=pagination.next_num, search=search, status_filter=status_filter, date_from=date_from, date_to=date_to, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg); color:var(--text); height:34px; padding:0 16px; font-size:12px;">بعدی</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

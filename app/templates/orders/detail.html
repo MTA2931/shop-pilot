@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title }}مشاهده سفارش {{ order.order_number }} - {{ shop_name }}{% endblock %}
+
+{% block page_title %}جزئیات سفارش{% endblock %}
+{% block page_subtitle %}سفارش شماره {{ order.order_number }}{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('orders.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازگشت به لیست</a>
+<a href="{{ url_for('orders.edit', order_id=order.id) }}" class="btn" style="margin-right:8px;">ویرایش</a>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 700px; margin: 0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div>
+            <h3 style="font-size:18px; font-weight:800;">سفارش <span class="mono">{{ order.order_number }}</span></h3>
+            <p style="color:var(--muted); font-size:13px;">{{ order.customer_name }} · {{ order.channel }}</p>
+        </div>
+        <span class="pill {% if order.status == 'completed' %}green{% elif order.status == 'processing' %}orange{% elif order.status == 'cancelled' %}red{% else %}orange{% endif %}" style="font-size:12px; padding:6px 14px;">
+            {{ order.status_label }}
+        </span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:24px;">
+        <div>
+            <h4 style="font-size:13px; color:var(--muted); margin-bottom:8px;">مشتری</h4>
+            <p><strong>نام:</strong> {{ order.customer_name }}</p>
+            {% if order.customer_phone %}<p><strong>تلفن:</strong> {{ order.customer_phone }}</p>{% endif %}
+            {% if order.customer_address %}<p><strong>آدرس:</strong> {{ order.customer_address }}</p>{% endif %}
+        </div>
+        <div>
+            <h4 style="font-size:13px; color:var(--muted); margin-bottom:8px;">جزئیات مالی</h4>
+            <p><strong>مبلغ کل:</strong> {{ order.total_amount }} تومان</p>
+            <p><strong>تاریخ ثبت:</strong> {{ order.created_at[:16] if order.created_at else '-' }}</p>
+            <p><strong>آخرین به‌روزرسانی:</strong> {{ order.updated_at[:16] if order.updated_at else '-' }}</p>
+            {% if order.administrator_name %}<p><strong>مدیر ثبت‌کننده:</strong> {{ order.administrator_name }}</p>{% endif %}
+        </div>
+    </div>
+
+    <div>
+        <h4 style="font-size:13px; color:var(--muted); margin-bottom:12px;">توضیحات سفارش</h4>
+        <div style="background:var(--bg); padding:16px; border-radius:8px; line-height:1.6; white-space:pre-wrap;">{{ order.description or 'بدون توضیح' }}</div>
+    </div>
+</div>
+{% endblock %}
