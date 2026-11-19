@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block title }}محصولات - {{ shop_name }}{% endblock %}
+
+{% block page_title %}محصولات{% endblock %}
+{% block page_subtitle %}مدیریت محصولات و موجودی{% endblock %}
+
+{% block page_actions %}
+<button class="btn" onclick="location.href='{{ url_for('products.create') }}'">
+    <i class="fa-solid fa-plus"></i> محصول جدید
+</button>
+{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-head" style="flex-wrap: wrap; gap: 8px; margin-bottom: 16px;">
+        <div><h3>لیست محصولات</h3></div>
+        <form method="GET" action="{{ url_for('products.index') }}" style="display:flex; gap:8px; flex-wrap:wrap; margin-inline-start:auto;">
+            <input type="search" name="search" placeholder="جست‌وجو..." value="{{ search }}" class="form-control" style="width:200px; height:34px; font-size:11px;">
+            <select name="category" class="form-control" style="width:140px; height:34px;">
+                <option value="">همه دسته‌بندی‌ها</option>
+                {% for cat in categories %}
+                <option value="{{ cat[0] }}" {% if category_filter == cat[0] %}selected{% endif %}>{{ cat[0] }}</option>
+                {% endfor %}
+            </select>
+            <select name="stock" class="form-control" style="width:140px; height:34px;">
+                <option value="">همه موجودی‌ها</option>
+                <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>موجود در انبار</option>
+                <option value="low_stock" {% if stock_filter == 'low_stock' %}selected{% endif %}>محدود موجودی</option>
+                <option value="out_of_stock" {% if stock_filter == 'out_of_stock' %}selected{% endif %}>ناموجود</option>
+            </select>
+            <button type="submit" class="btn" style="height:34px; padding:0 16px; font-size:11px;">جست‌وجو</button>
+            <a href="{{ url_for('products.index') }}" class="btn" style="background:var(--line); color:var(--text); height:34px; padding:0 16px; font-size:11px;">پاک‌سازی</a>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>نام محصول</th>
+                    <th>SKU</th>
+                    <th>دسته‌بندی</th>
+                    <th>قیمت</th>
+                    <th>موجودی</th>
+                    <th>تاریخ ثبت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td class="mono">{{ product.sku }}</td>
+                    <td>{{ product.category or '-' }}</td>
+                    <td>{{ product.price }}</td>
+                    <td>
+                        <span class="pill {% if product.stock_quantity <= 0 %}red{% elif product.is_low_stock() %}orange{% else %}green{% endif %}">
+                            {{ product.stock_quantity }}
+                        </span>
+                    </td>
+                    <td>{{ product.created_at[:10] if product.created_at else '-' }}</td>
+                    <td>
+                        <a href="{{ url_for('products.detail', product_id=product.id) }}" class="icon-btn" title="مشاهده" style="color:var(--green);"><i class="fa-solid fa-eye"></i></a>
+                        <a href="{{ url_for('products.edit', product_id=product.id) }}" class="icon-btn" title="ویرایش" style="color:var(--orange);"><i class="fa-solid fa-pen"></i></a>
+                        <form method="POST" action="{{ url_for('products.delete', product_id=product.id) }}" style="display:inline;" data-confirm="آیا از حذف این محصول اطمینان دارید؟">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="icon-btn" title="حذف" style="color:var(--red);"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" style="text-align:center; color:var(--muted); padding:30px;">
+                        <i class="fa-solid fa-box-open" style="font-size:32px; margin-bottom:12px; opacity:0.5;"></i>
+                        <div>محصولی یافت نشد.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('products.index', page=pagination.prev_num, search=search, category_filter=category_filter, stock_filter=stock_filter, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg); color:var(--text); height:34px; padding:0 16px;">قبلی</a>
+        {% endif %}
+        <span style="font-size:12px; color:var(--muted);">صفحه {{ pagination.page }} از {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('products.index', page=pagination.next_num, search=search, category_filter=category_filter, stock_filter=stock_filter, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg); color:var(--text); height:34px; padding:0 16px;">بعدی</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

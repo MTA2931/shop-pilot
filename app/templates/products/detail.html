@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title }}مشاهده محصول {{ product.sku }} - {{ shop_name }}{% endblock %}
+
+{% block page_title %}جزئیات محصول{% endblock %}
+{% block page_subtitle %}{{ product.name }}{% endblock %}
+
+{% block page_actions %}
+<a href="{{ url_for('products.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازگشت به لیست</a>
+<a href="{{ url_for('products.edit', product_id=product.id) }}" class="btn" style="margin-right:8px;">ویرایش</a>
+{% endblock %}
+
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 0 auto;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+        <div>
+            <h3 style="font-size:18px; font-weight:800;">{{ product.name }}</h3>
+            <p style="color:var(--muted); font-size:13px;">SKU: {{ product.sku }} · {{ product.category or 'بدون دسته‌بندی' }}</p>
+        </div>
+        <span class="pill {% if product.stock_quantity <= 0 %}red{% elif product.is_low_stock() %}orange{% else %}green{% endif %}" style="font-size:12px; padding:6px 14px;">
+            {% if product.stock_quantity <= 0 %}ناموجود{% elif product.is_low_stock() %}محدود موجودی{% else %}موجود{% endif %}
+        </span>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:24px; margin-bottom:24px;">
+        <div>
+            <h4 style="font-size:13px; color:var(--muted); margin-bottom:8px;">قیمت و موجودی</h4>
+            <p><strong>قیمت:</strong> {{ product.price }} تومان</p>
+            <p><strong>موجودی:</strong> {{ product.stock_quantity }} عدد</p>
+            <p><strong>حد هشدار:</strong> {{ product.min_stock_threshold }} عدد</p>
+        </div>
+        <div>
+            <h4 style="font-size:13px; color:var(--muted); margin-bottom:8px;">تاریخ‌ها</h4>
+            <p><strong>تاریخ ثبت:</strong> {{ product.created_at[:16] if product.created_at else '-' }}</p>
+            <p><strong>آخرین به‌روزرسانی:</strong> {{ product.updated_at[:16] if product.updated_at else '-' }}</p>
+        </div>
+    </div>
+
+    {% if product.description %}
+    <div>
+        <h4 style="font-size:13px; color:var(--muted); margin-bottom:12px;">توضیحات</h4>
+        <div style="background:var(--bg); padding:16px; border-radius:8px; line-height:1.6; white-space:pre-wrap;">{{ product.description }}</div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
