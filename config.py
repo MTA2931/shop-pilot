@@ -136,7 +136,7 @@ class ProductionConfig(Config):
 class TestingConfig(Config):
     TESTING = True
     DEBUG = True
-    SQLALCHEMY_DATABASE_URI = "sqlite:////tmp/shop_pilot_test.db"
+    SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(basedir, "instance", "shop_pilot_test.db")
     SESSION_COOKIE_SECURE = False
     REMEMBER_COOKIE_SECURE = False
     WTF_CSRF_ENABLED = False
