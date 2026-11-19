@@ -3,6 +3,7 @@
 
 import os
 from datetime import timedelta
+from pathlib import Path
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -34,6 +35,13 @@ class Config:
     # Security / secret key
     # ------------------------------------------------------------------
     SECRET_KEY = os.environ.get("SECRET_KEY") or "dev-secret-key-change-me-in-production"
+    
+    # ------------------------------------------------------------------
+    # Database
+    # ------------------------------------------------------------------
+    basedir = Path(__file__).resolve().parent
+    instance_dir = basedir / "instance"
+    instance_dir.mkdir(parents=True, exist_ok=True)
 
     @classmethod
     def validate(cls):
@@ -52,9 +60,8 @@ class Config:
     # ------------------------------------------------------------------
     # Database
     # ------------------------------------------------------------------
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        "DATABASE_URL",
-        "sqlite:///" + os.path.join(basedir, "instance", "shop_pilot.db"),
+    SQLALCHEMY_DATABASE_URI = (
+        f"sqlite:///{(instance_dir / 'shop_pilot.db').as_posix()}"
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     SQLALCHEMY_ENGINE_OPTIONS = {
