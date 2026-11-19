@@ -2,7 +2,24 @@
 
 import os
 from flask import Flask, redirect, url_for, render_template, flash, g, request
-from flask_login import LoginManager, current_user
+from flask_login import LoginManager, AnonymousUserMixin, current_user
+
+class AnonymousUser(AnonymousUserMixin):
+    def is_admin(self):
+        return False
+    def is_super_admin(self):
+        return False
+    def is_manager(self):
+        return False
+    def is_active(self):
+        return False
+    @property
+    def role_label(self):
+        return ""
+    @property
+    def username(self):
+        return ""
+
 from flask_wtf.csrf import CSRFError
 from werkzeug.security import check_password_hash
 
@@ -40,6 +57,7 @@ def create_app(config_name=None):
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    login_manager.anonymous_user = AnonymousUser
     limiter.init_app(app)
 
     # Register blueprints
