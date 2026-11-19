@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title }داشبورد - {{ shop_name }}{% endblock %}
+
+{% block page_title %}داشبورد{% endblock %}
+{% block page_subtitle %}خلاصه وضعیت فروشگاه شما{% endblock %}
+
+{% block page_actions %}
+<button class="btn" onclick="location.href='{{ url_for('orders.create') }}'">
+    <i class="fa-solid fa-plus"></i> ثبت سفارش جدید
+</button>
+{% endblock %}
+
+{% block content %}
+<!-- Stats -->
+<section class="stats">
+    <article class="card">
+        <div class="stat-head">
+            <div class="stat-ico"><i class="fa-solid fa-cart-shopping"></i></div>
+            <span>کل سفارش‌ها</span>
+        </div>
+        <div class="stat-val"><strong>{{ order_stats.total }}</strong><small>سفارش</small></div>
+    </article>
+
+    <article class="card">
+        <div class="stat-head">
+            <div class="stat-ico warn"><i class="fa-regular fa-clock"></i></div>
+            <span>در انتظار پرداخت</span>
+        </div>
+        <div class="stat-val"><strong>{{ order_stats.pending }}</strong><small>سفارش</small></div>
+    </article>
+
+    <article class="card">
+        <div class="stat-head">
+            <div class="stat-ico"><i class="fa-solid fa-check-double"></i></div>
+            <span>تکمیل‌شده‌ها</span>
+        </div>
+        <div class="stat-val"><strong>{{ order_stats.completed }}</strong><small>سفارش</small></div>
+    </article>
+
+    <article class="card">
+        <div class="stat-head">
+            <div class="stat-ico"><i class="fa-solid fa-arrow-trend-up"></i></div>
+<section class="row two">
+    <article class="card">
+        <div class="card-head">
+            <div>
+                <h3>روند فروش</h3>
+                <p>میزان فروش در ۳۰ روز گذشته</p>
+            </div>
+        </div>
+        <div style="height: 300px;">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="card-head">
+            <div>
+                <h3>محصولات</h3>
+                <p>وضعیت موجودی انبار</p>
+            </div>
+        </div>
+        <div class="donut-wrap" style="margin-top: 20px;">
+            <ul class="legend">
+                <li><span class="dot" style="background: var(--green)"></span><div><b>موجود در انبار</b><small>{{ product_stats.total - product_stats.low_stock }} محصول</small></div></li>
+                <li><span class="dot" style="background: var(--orange)"></span><div><b>محدود موجودی</b><small>{{ product_stats.low_stock }} محصول</small></div></li>
+                <li><span class="dot" style="background: var(--red)"></span><div><b>ناموجود</b><small>{{ product_stats.out_of_stock }} محصول</small></div></li>
+            </ul>
+            <div class="donut"><div><span><strong>{{ inventory_stats.total_items }}</strong><small>کالا</small></span></div></div>
+        </div>
+    </article>
+</section>
+            <span>فروش کل</span>
+        </div>
+        <div class="stat-val"><strong>{{ order_stats.total_sales }}</strong><small>تومان</small></div>
+    </article>
+<!-- Recent Orders -->
+<section class="row two">
+    <article class="card">
+        <div class="card-head">
+            <h3>آخرین سفارش‌ها</h3>
+            <a class="link" href="{{ url_for('orders.index') }}">مشاهده همه سفارش‌ها</a>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>شماره سفارش</th><th>مشتری</th><th>مبلغ</th><th>وضعیت</th></tr></thead>
+                <tbody id="recentOrders">
+                    {% for order in recent_orders %}
+                    <tr>
+                        <td class="mono">{{ order.order_number }}</td>
+                        <td>{{ order.customer_name }}</td>
+                        <td>{{ order.total_amount }}</td>
+                        <td><span class="pill {% if order.status == 'completed' %}green{% elif order.status == 'processing' %}orange{% elif order.status == 'cancelled' %}red{% else %}orange{% endif %}">{{ order.status_label }}</span></td>
+                    </tr>
+                    {% else %}
+                    <tr><td colspan="4" style="text-align:center;color:var(--muted);">سفارشی یافت نشد.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="card-head"><h3>هشدار موجودی کالا</h3><a class="link" href="{{ url_for('inventory.index') }}">مدیریت انبار</a></div>
+        <div class="stock">
+            {% set low_products = [] %}
+            {% for p in product_stats %}
+            {% endfor %}
+            <div style="text-align:center;color:var(--muted);padding:20px;">
+                <i class="fa-solid fa-info-circle"></i> برای مشاهده هشدارها به بخش انبار مراجعه کنید.
+            </div>
+        </div>
+    </article>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('salesChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: {{ chart_labels | tojson | safe }},
+                datasets: [{
+                    label: 'تعداد سفارش‌ها',
+                    data: {{ chart_data | tojson | safe }},
+                    backgroundColor: '#2e8b5e',
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+</section>
