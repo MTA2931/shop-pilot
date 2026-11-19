@@ -1,8 +1,5 @@
-"""ShopPilot application entry point.
-
-Run with:  python run.py
-or:        flask --app app run
-"""
+# Copyright © 2026 MTA. All rights reserved.
+# Code by MTA. Github: MTA2931
 
 import os
 import sys

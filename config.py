@@ -1,3 +1,6 @@
+# Copyright © 2026 MTA. All rights reserved.
+# Code by MTA. Github: MTA2931
+
 import os
 from datetime import timedelta
 
