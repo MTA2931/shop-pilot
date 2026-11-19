@@ -1,5 +1,6 @@
 """Pytest configuration and fixtures."""
 
+import os
 import pytest
 from app import create_app
 
@@ -10,6 +11,10 @@ def app():
     app = create_app("testing")
     with app.app_context():
         yield app
+    # Cleanup test database after tests
+    test_db = os.path.join(app.instance_path, "shop_pilot_test.db")
+    if os.path.exists(test_db):
+        os.remove(test_db)
 
 
 @pytest.fixture
