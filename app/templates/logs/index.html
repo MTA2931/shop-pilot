@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title }}لاگ‌ها - {{ shop_name }}{% endblock %}
+
+{% block page_title %}لاگ‌های فعالیت{% endblock %}
+{% block page_subtitle %>ثبت تمام فعالیت‌های سیستم{% endblock %}
+
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-head" style="flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+        <div><h3>لیست لاگ‌ها</h3></div>
+        <form method="GET" action="{{ url_for('logs.index') }}" style="display:flex; gap:8px; flex-wrap:wrap; margin-inline-start:auto;">
+            <input type="search" name="search" placeholder="جست‌وجو..." value="{{ search }}" class="form-control" style="width:200px; height:34px;">
+            <select name="category" class="form-control" style="width:140px; height:34px;">
+                <option value="">همه دسته‌بندی‌ها</option>
+                {% for cat_key, cat_label in categories %}
+                <option value="{{ cat_key }}" {% if category_filter == cat_key %}selected{% endif %}>{{ cat_label }}</option>
+                {% endfor %}
+            </select>
+            <input type="date" name="date_from" value="{{ date_from }}" class="form-control" style="width:130px; height:34px;">
+            <input type="date" name="date_to" value="{{ date_to }}" class="form-control" style="width:130px; height:34px;">
+            <button type="submit" class="btn" style="height:34px; padding:0 16px;">جست‌وجو</button>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>ادمین</th>
+                    <th>عملیات</th>
+                    <th>دسته‌بندی</th>
+                    <th>توضیحات</th>
+                    <th>آی‌پی</th>
+                    <th>تاریخ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                <tr>
+                    <td>{{ log.administrator_name }}</td>
+                    <td>{{ log.action }}</td>
+                    <td><span class="pill">{{ log.category_label }}</span></td>
+                    <td>{{ log.description }}</td>
+                    <td>{{ log.ip_address or '-' }}</td>
+                    <td>{{ log.created_at[:16] if log.created_at else '-' }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+                        <i class="fa-solid fa-file-contract" style="font-size:32px;margin-bottom:12px;opacity:0.5;"></i>
+                        <div>گزارش فعالیت ثبت نشده است.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('logs.index', page=pagination.prev_num, search=search, category_filter=category_filter, date_from=date_from, date_to=date_to) }}" class="btn" style="background:var(--bg);color:var(--text);height:34px;padding:0 16px;">قبلی</a>
+        {% endif %}
+        <span style="font-size:12px;color:var(--muted);">صفحه {{ pagination.page }} از {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('logs.index', page=pagination.next_num, search=search, category_filter=category_filter, date_from=date_from, date_to=date_to) }}" class="btn" style="background:var(--bg);color:var(--text);height:34px;padding:0 16px;">بعدی</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

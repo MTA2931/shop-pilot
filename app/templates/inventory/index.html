@@ -20,3 +20,137 @@
             <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-check"></i></div><span>موجود در انبار</span></div>
             <div class="stat-val"><strong>{{ stats.total_quantity }}</strong><small>عدد</small></div>
         </article>
+        <article class="card" style="padding:16px;">
+            <div class="stat-head"><div class="stat-ico warn"><i class="fa-solid fa-triangle-exclamation"></i></div><span>محدود موجودی</span></div>
+            <div class="stat-val"><strong>{{ stats.low_stock }}</strong><small>محصول</small></div>
+        </article>
+        <article class="card" style="padding:16px;">
+            <div class="stat-head"><div class="stat-ico" style="background:var(--red-soft);color:var(--red);"><i class="fa-solid fa-circle-exclamation"></i></div><span>ناموجود</span></div>
+            <div class="stat-val"><strong>{{ stats.out_of_stock }}</strong><small>محصول</small></div>
+        </article>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head" style="flex-wrap:wrap; gap:8px; margin-bottom:16px;">
+        <div><h3>لیست موجودی انبار</h3></div>
+        <form method="GET" action="{{ url_for('inventory.index') }}" style="display:flex; gap:8px; flex-wrap:wrap; margin-inline-start:auto;">
+            <input type="search" name="search" placeholder="جست‌وجو..." value="{{ search }}" class="form-control" style="width:200px; height:34px;">
+            <select name="stock" class="form-control" style="width:140px; height:34px;">
+                <option value="">همه وضعیت‌ها</option>
+                <option value="in_stock" {% if stock_filter == 'in_stock' %}selected{% endif %}>موجود</option>
+                <option value="low_stock" {% if stock_filter == 'low_stock' %}selected{% endif %}>محدود</option>
+                <option value="out_of_stock" {% if stock_filter == 'out_of_stock' %}selected{% endif %}>ناموجود</option>
+            </select>
+            <button type="submit" class="btn" style="height:34px; padding:0 16px;">جست‌وجو</button>
+        </form>
+    </div>
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>نام کالا</th>
+                    <th>SKU</th>
+                    <th>مقدار موجودی</th>
+                    <th>حد آستانه</th>
+                    <th>وضعیت</th>
+                    <th>تنظیم موجودی</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td class="mono">{{ item.sku }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td>{{ item.min_threshold }}</td>
+                    <td>
+                        <span class="pill {% if item.quantity <= 0 %}red{% elif item.quantity <= item.min_threshold %}orange{% else %}green{% endif %}">
+                            {% if item.quantity <= 0 %}ناموجود{% elif item.quantity <= item.min_threshold %}محدود{% else %}موجود{% endif %}
+                        </span>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-sm" style="background:var(--bg);color:var(--text);height:32px;padding:0 12px;font-size:11px;" onclick="openAdjustModal({{ item.product_id }}, '{{ item.name }}')">
+                            تنظیم موجودی
+                        </button>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">
+                        <i class="fa-solid fa-warehouse" style="font-size:32px;margin-bottom:12px;opacity:0.5;"></i>
+                        <div>کالایی در انبار ثبت نشده است.</div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if pagination.pages > 1 %}
+    <div style="display:flex; justify-content:center; gap:8px; margin-top:16px;">
+        {% if pagination.has_prev %}
+        <a href="{{ url_for('inventory.index', page=pagination.prev_num, search=search, stock_filter=stock_filter, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg);color:var(--text);height:34px;padding:0 16px;">قبلی</a>
+        {% endif %}
+        <span style="font-size:12px;color:var(--muted);">صفحه {{ pagination.page }} از {{ pagination.pages }}</span>
+        {% if pagination.has_next %}
+        <a href="{{ url_for('inventory.index', page=pagination.next_num, search=search, stock_filter=stock_filter, sort_by=sort_by, sort_order=sort_order) }}" class="btn" style="background:var(--bg);color:var(--text);height:34px;padding:0 16px;">بعدی</a>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+
+<!-- Stock adjustment modal -->
+<div id="adjustModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); z-index:100; align-items:center; justify-content:center;">
+    <div style="background:var(--card); border-radius:12px; padding:24px; min-width:400px; max-width:90%; max-height:90vh; overflow-y:auto;">
+        <h3 style="margin-bottom:16px;">تغییر موجودی کالا</h3>
+        <form method="POST" action="{{ url_for('inventory.adjust') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="product_id" id="adjProductId">
+            <div style="margin-bottom:12px;">
+                <strong style="display:block; margin-bottom:4px; font-size:13px;">نام کالا:</strong>
+                <span id="adjProductName" style="color:var(--muted);"></span>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; margin-bottom:6px; font-size:13px;">تغییر مقدار</label>
+                <input type="number" name="quantity_change" class="form-control" required
+                       placeholder="مثلاً: ۱۰ برای افزایش، -۵ برای کاهش">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; margin-bottom:6px; font-size:13px;">نوع تغییر</label>
+                <select name="movement_type" class="form-control">
+                    <option value="adjustment">تغییر دستی</option>
+                    <option value="increase">افزایش موجودی</option>
+                    <option value="decrease">کاهش موجودی</option>
+                </select>
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; margin-bottom:6px; font-size:13px;">دلیل تغییر</label>
+                <input type="text" name="reason" class="form-control" placeholder="دلیل تغییر موجودی">
+            </div>
+            <div style="margin-bottom:12px;">
+                <label style="display:block; margin-bottom:6px; font-size:13px;">یادداشت</label>
+                <input type="text" name="notes" class="form-control" placeholder="یادداشت اضافی (اختیاری)">
+            </div>
+            <div style="display:flex; gap:8px; justify-content:flex-end;">
+                <button type="button" class="btn" style="background:var(--bg);color:var(--text);height:36px;padding:0 16px;" onclick="closeAdjustModal()">لغو</button>
+                <button type="submit" class="btn" style="height:36px;">ثبت تغییر</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAdjustModal(productId, productName) {
+    document.getElementById('adjProductId').value = productId;
+    document.getElementById('adjProductName').textContent = productName;
+    document.getElementById('adjustModal').style.display = 'flex';
+}
+function closeAdjustModal() {
+    document.getElementById('adjustModal').style.display = 'none';
+}
+document.getElementById('adjustModal').addEventListener('click', function(e) {
+    if (e.target === this) closeAdjustModal();
+});
+</script>
+{% endblock %}

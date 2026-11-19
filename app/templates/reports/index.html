@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title }}گزارش‌ها - {{ shop_name }}{% endblock %}
+
+{% block page_title %}گزارش‌ها{% endblock %}
+{% block page_subtitle %>تحلیل و گزارش‌های فروشگاه{% endblock %}
+
+{% block page_actions %}{% endblock %}
+
+{% block content %}
+<div class="card" style="margin-bottom:24px;">
+    <form method="GET" action="{{ url_for('reports.index') }}" style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
+        <label style="font-size:13px; font-weight:500;">از تاریخ:</label>
+        <input type="date" name="date_from" value="{{ date_from }}" class="form-control" style="width:140px;">
+        <label style="font-size:13px; font-weight:500;">تا تاریخ:</label>
+        <input type="date" name="date_to" value="{{ date_to }}" class="form-control" style="width:140px;">
+        <button type="submit" class="btn">نمایش گزارش</button>
+        <a href="{{ url_for('reports.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازنشانی</a>
+    </form>
+</div>
+
+<section class="stats">
+    <article class="card" style="padding:16px;">
+        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-cart-shopping"></i></div><span>کل سفارش‌ها</span></div>
+        <div class="stat-val"><strong>{{ performance_data.total_orders }}</strong><small>سفارش</small></div>
+    </article>
+    <article class="card" style="padding:16px;">
+        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-check-double"></i></div><span>تکمیل‌شده‌ها</span></div>
+        <div class="stat-val"><strong>{{ performance_data.completed_orders }}</strong><small>سفارش</small></div>
+    </article>
+    <article class="card" style="padding:16px;">
+        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-money-bill"></i></div><span>فروش کل</span></div>
+        <div class="stat-val"><strong>{{ performance_data.total_revenue }}</strong><small>تومان</small></div>
+    </article>
+    <article class="card" style="padding:16px;">
+        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-percent"></i></div><span>نرخ تکمیل</span></div>
+        <div class="stat-val"><strong>{{ performance_data.conversion_rate }}%</strong><small>تبدیل</small></div>
+    </article>
+</section>
+
+<section class="row two">
+    <article class="card">
+        <div class="card-head"><h3>روند فروش</h3></div>
+        <div style="height:300px;">
+            <canvas id="salesChart"></canvas>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="card-head"><h3>وضعیت سفارش‌ها</h3></div>
+        <div style="height:300px; display:flex; flex-direction:column; gap:12px; padding:20px;">
+            {% for item in order_data %}
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span>{{ item.status_label }}</span>
+                <span>{{ item.count }} سفارش · {{ item.total_amount }} تومان</span>
+            </div>
+            {% else %}
+            <div style="text-align:center; color:var(--muted);">داده‌ای ثبت نشده است.</div>
+            {% endfor %}
+        </div>
+    </article>
+</section>
+
+<section class="row two">
+    <article class="card">
+        <div class="card-head"><h3>گزارش محصولات</h3></div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>دسته‌بندی</th><th>تعداد محصول</th><th>موجودی کل</th><th>ارزش کل</th></tr></thead>
+                <tbody>
+                    {% for item in product_data %}
+                    <tr><td>{{ item.category }}</td><td>{{ item.product_count }}</td><td>{{ item.total_stock }}</td><td>{{ item.total_value }}</td></tr>
+                    {% else %}
+                    <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">داده‌ای ثبت نشده است.</td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="card">
+        <div class="card-head"><h3>خلاصه موجودی انبار</h3></div>
+        <div class="stats" style="margin-top:20px;">
+            <article class="card" style="padding:12px;"><div class="stat-head"><span>کل کالا</span></div><div class="stat-val"><strong>{{ inventory_data.total_items }}</strong></div></article>
+            <article class="card" style="padding:12px;"><div class="stat-head"><span>مقدار کل</span></div><div class="stat-val"><strong>{{ inventory_data.total_quantity }}</strong></div></article>
+            <article class="card" style="padding:12px;"><div class="stat-head"><span>محدود موجودی</span></div><div class="stat-val"><strong>{{ inventory_data.low_stock }}</strong></div></article>
+            <article class="card" style="padding:12px;"><div class="stat-head"><span>ناموجود</span></div><div class="stat-val"><strong>{{ inventory_data.out_of_stock }}</strong></div></article>
+        </div>
+    </article>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('salesChart');
+    if (ctx) {
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: {{ sales_labels | tojson | safe }},
+                datasets: [{
+                    label: 'تعداد سفارش‌ها',
+                    data: {{ sales_counts | tojson | safe }},
+                    borderColor: '#2e8b5e',
+                    backgroundColor: 'rgba(46, 139, 94, 0.1)',
+                    fill: true,
+                    tension: 0.3
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
