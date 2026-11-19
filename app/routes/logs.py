@@ -14,7 +14,6 @@ logs_bp = Blueprint("logs", __name__, url_prefix="/logs")
 def index():
     """List activity logs with search, category filtering, date filtering, pagination."""
     if not current_user.is_admin():
-        from flask import flash, redirect, url_for
         flash("دسترسی مجاز نیست.", "danger")
         return redirect(url_for("dashboard.index"))
 
@@ -24,8 +23,6 @@ def index():
     category_filter = request.args.get("category", "").strip() or None
     date_from = request.args.get("date_from", "").strip() or None
     date_to = request.args.get("date_to", "").strip() or None
-
-    from datetime import datetime as dt
     parsed_date_from = None
     parsed_date_to = None
     if date_from:
@@ -71,8 +68,6 @@ def index():
         ("system", "سیستم"),
         ("security", "امنیت"),
     ]
-
-    from app.extensions import db
 
     return render_template(
         "logs/index.html",
