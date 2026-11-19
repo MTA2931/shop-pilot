@@ -14,6 +14,8 @@ def log_activity(
     description=None,
     entity_type=None,
     entity_id=None,
+    ip_address=None,
+    user_agent=None,
 ):
     """Log an administrative activity.
 
