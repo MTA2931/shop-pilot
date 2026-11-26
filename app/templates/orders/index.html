@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title }سفارش‌ها - {{ shop_name }}{% endblock %}
+{% block title %}سفارش‌ها - {{ shop_name }}{% endblock %}
 
 {% block page_title %}سفارش‌ها{% endblock %}
-{% block page_subtitle %>مدیریت و پیگیری سفارش‌های مشتریان{% endblock %}
+{% block page_subtitle %}مدیریت و پیگیری سفارش‌های مشتریان{% endblock %}
 
 {% block page_actions %}
 <button class="btn" onclick="location.href='{{ url_for('orders.create') }}'">
@@ -99,3 +99,5 @@
     {% endif %}
 </div>
 {% endblock %}
+
+
