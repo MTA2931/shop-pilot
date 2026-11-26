@@ -2,11 +2,12 @@
 
 from datetime import datetime, timezone
 from flask import current_app
+from flask_login import UserMixin
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
-class Administrator(db.Model):
+class Administrator(UserMixin, db.Model):
     """Administrator account with RBAC support.
 
     Roles:
