@@ -1,40 +1,88 @@
-
 /* =========================================================
    ShopPilot - Authentication Styles
-   Independent Login Layout
+   Matches: auth/base.html + auth/login.html
+   Themes : body[data-theme="light" | "dark"]
    ========================================================= */
 
 /* ---------------------------------------------------------
-   1. Root Variables
+   1. Theme Variables
    --------------------------------------------------------- */
 
-:root {
+/* Dark (also the fallback if data-theme is missing) */
+body,
+body[data-theme="dark"] {
     --auth-bg: #17191f;
     --auth-surface: #20232b;
     --auth-card: #242730;
 
     --auth-input: #1c1f27;
+    --auth-input-focus: #20232b;
     --auth-border: #363a46;
+    --auth-border-hover: #505563;
 
     --auth-text: #f1f2f5;
+    --auth-label: #d9dbe2;
     --auth-muted: #969ba9;
+    --auth-placeholder: #777d8b;
+    --auth-icon: #858b99;
 
     --auth-green: #27ae75;
     --auth-green-hover: #219765;
     --auth-green-soft: rgba(39, 174, 117, 0.12);
 
-    --auth-danger: #ef6464;
-    --auth-danger-bg: rgba(239, 100, 100, 0.10);
+    --auth-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
 
-    --auth-radius: 12px;
+    --alert-danger-text: #ff8585;
+    --alert-success-text: #55d69b;
+    --alert-warning-text: #e9bd69;
+    --alert-info-text: #83b8e9;
+}
+
+/* Light */
+body[data-theme="light"] {
+    --auth-bg: #f3f5f8;
+    --auth-surface: #ffffff;
+    --auth-card: #ffffff;
+
+    --auth-input: #f6f7f9;
+    --auth-input-focus: #ffffff;
+    --auth-border: #dfe3ea;
+    --auth-border-hover: #c3c9d4;
+
+    --auth-text: #1d2129;
+    --auth-label: #3a404c;
+    --auth-muted: #6b7280;
+    --auth-placeholder: #9aa1ae;
+    --auth-icon: #8a91a0;
+
+    --auth-green: #1f9d6a;
+    --auth-green-hover: #198556;
+    --auth-green-soft: rgba(31, 157, 106, 0.10);
+
+    --auth-shadow: 0 18px 50px rgba(30, 41, 59, 0.10);
+
+    --alert-danger-text: #c53030;
+    --alert-success-text: #17764f;
+    --alert-warning-text: #a76a0a;
+    --alert-info-text: #2563a8;
+}
+
+/* Shared tokens */
+:root {
+    --auth-danger: #ef6464;
+    --auth-radius-sm: 9px;
+    --auth-radius-md: 12px;
+    --auth-radius-lg: 16px;
     --auth-transition: 0.2s ease;
 }
 
 /* ---------------------------------------------------------
-   2. Global Reset
+   2. Reset & Base
    --------------------------------------------------------- */
 
-* {
+*,
+*::before,
+*::after {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -43,53 +91,200 @@
 html {
     min-height: 100%;
     direction: rtl;
+    -webkit-text-size-adjust: 100%;
 }
 
-body.auth-body {
+body {
     min-height: 100vh;
+    min-height: 100dvh;
+
     background: var(--auth-bg);
     color: var(--auth-text);
 
     font-family: "Vazirmatn", Tahoma, sans-serif;
     font-size: 14px;
+    line-height: 1.7;
+
+    direction: rtl;
+    -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+    font-family: inherit;
+}
+
+/* ---------------------------------------------------------
+   3. Page Layout (split screen)
+   --------------------------------------------------------- */
+
+.auth-page {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+
+    min-height: 100vh;
+    min-height: 100dvh;
+}
+
+/* ---------------------------------------------------------
+   4. Brand Panel
+   --------------------------------------------------------- */
+
+.auth-brand {
+    position: relative;
+    overflow: hidden;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    padding: 40px 20px;
+    padding: 48px;
 
-    direction: rtl;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(255, 255, 255, 0.10), transparent 45%),
+        linear-gradient(145deg, #1f9d6a 0%, #15704c 55%, #0f4f37 100%);
+
+    color: #ffffff;
 }
 
-/* ---------------------------------------------------------
-   3. Main Container
-   --------------------------------------------------------- */
+/* Soft decorative circles */
+.auth-brand::before,
+.auth-brand::after {
+    content: "";
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    pointer-events: none;
+}
 
-.auth-container {
+.auth-brand::before {
+    width: 380px;
+    height: 380px;
+    bottom: -140px;
+    left: -120px;
+}
+
+.auth-brand::after {
+    width: 220px;
+    height: 220px;
+    top: -70px;
+    right: -60px;
+}
+
+.brand-content {
+    position: relative;
+    z-index: 1;
+
     width: 100%;
-    max-width: 440px;
-    margin: auto;
-}
-
-.login-wrapper {
-    width: 100%;
-}
-
-/* ---------------------------------------------------------
-   4. Brand Section
-   --------------------------------------------------------- */
-
-.login-brand {
-    text-align: center;
-    margin-bottom: 32px;
+    max-width: 400px;
 }
 
 .brand-logo {
     width: 68px;
     height: 68px;
 
-    margin: 0 auto 18px;
+    margin-bottom: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 18px;
+
+    color: #ffffff;
+    font-size: 29px;
+
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+.brand-content h1 {
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.4;
+
+    margin-bottom: 12px;
+}
+
+.brand-content > p {
+    color: rgba(255, 255, 255, 0.82);
+    font-size: 14px;
+    line-height: 2;
+
+    margin-bottom: 32px;
+}
+
+.brand-features {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.feature {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.feature i {
+    flex-shrink: 0;
+
+    width: 26px;
+    height: 26px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(255, 255, 255, 0.18);
+    border-radius: 50%;
+
+    font-size: 11px;
+}
+
+/* ---------------------------------------------------------
+   5. Form Side & Card
+   --------------------------------------------------------- */
+
+.auth-form-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px 24px;
+
+    background: var(--auth-bg);
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 440px;
+
+    background: var(--auth-card);
+    border: 1px solid var(--auth-border);
+    border-radius: var(--auth-radius-lg);
+
+    padding: 36px 32px 28px;
+
+    box-shadow: var(--auth-shadow);
+}
+
+.auth-header {
+    text-align: center;
+    margin-bottom: 28px;
+}
+
+.auth-icon {
+    width: 56px;
+    height: 56px;
+
+    margin: 0 auto 16px;
 
     display: flex;
     align-items: center;
@@ -97,59 +292,23 @@ body.auth-body {
 
     background: var(--auth-green-soft);
     border: 1px solid rgba(39, 174, 117, 0.25);
-
-    border-radius: 18px;
+    border-radius: 15px;
 
     color: var(--auth-green);
-    font-size: 29px;
+    font-size: 22px;
 }
 
-.brand-name {
+.auth-header h2 {
     color: var(--auth-text);
-    font-size: 25px;
-    font-weight: 800;
+    font-size: 20px;
+    font-weight: 700;
 
     margin-bottom: 8px;
 }
 
-.brand-description {
+.auth-header p {
     color: var(--auth-muted);
     font-size: 13px;
-    line-height: 1.9;
-}
-
-/* ---------------------------------------------------------
-   5. Login Card
-   --------------------------------------------------------- */
-
-.login-card {
-    width: 100%;
-
-    background: var(--auth-card);
-    border: 1px solid var(--auth-border);
-
-    border-radius: 16px;
-
-    padding: 32px;
-
-    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.20);
-}
-
-.login-heading {
-    margin-bottom: 28px;
-}
-
-.login-heading h2 {
-    color: var(--auth-text);
-    font-size: 19px;
-    font-weight: 700;
-
-    margin-bottom: 9px;
-}
-
-.login-heading p {
-    color: var(--auth-muted);
-    font-size: 12px;
     line-height: 1.9;
 }
 
@@ -164,7 +323,7 @@ body.auth-body {
 .form-label {
     display: block;
 
-    color: #d9dbe2;
+    color: var(--auth-label);
     font-size: 13px;
     font-weight: 600;
 
@@ -182,15 +341,14 @@ body.auth-body {
     width: 100%;
     height: 49px;
 
+    /* RTL: icon on the right, toggle button on the left */
     padding: 0 43px 0 45px;
 
     background: var(--auth-input);
     border: 1px solid var(--auth-border);
-    border-radius: 9px;
+    border-radius: var(--auth-radius-sm);
 
     color: var(--auth-text);
-
-    font-family: inherit;
     font-size: 13px;
 
     outline: none;
@@ -202,187 +360,235 @@ body.auth-body {
 }
 
 .form-control::placeholder {
-    color: #777d8b;
+    color: var(--auth-placeholder);
     opacity: 1;
 }
 
 .form-control:hover {
-    border-color: #505563;
+    border-color: var(--auth-border-hover);
 }
 
 .form-control:focus {
-    background: #20232b;
+    background: var(--auth-input-focus);
     border-color: var(--auth-green);
+    box-shadow: 0 0 0 3px rgba(39, 174, 117, 0.15);
+}
 
-    box-shadow: 0 0 0 3px rgba(39, 174, 117, 0.13);
+/* Browser autofill keeps the theme colors */
+.form-control:-webkit-autofill,
+.form-control:-webkit-autofill:hover,
+.form-control:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--auth-text);
+    caret-color: var(--auth-text);
+    box-shadow: 0 0 0 1000px var(--auth-input) inset;
+    transition: background-color 9999s ease-out 0s;
 }
 
 .input-icon {
     position: absolute;
-
     right: 15px;
     top: 50%;
-
     transform: translateY(-50%);
 
-    color: #858b99;
+    color: var(--auth-icon);
     font-size: 14px;
 
     pointer-events: none;
+    transition: color var(--auth-transition);
+}
+
+.input-wrapper:focus-within .input-icon {
+    color: var(--auth-green);
 }
 
 .password-toggle {
     position: absolute;
-
-    left: 13px;
+    left: 10px;
     top: 50%;
-
     transform: translateY(-50%);
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
 
     background: transparent;
     border: none;
+    border-radius: 6px;
 
-    color: #858b99;
+    color: var(--auth-icon);
     font-size: 15px;
-
     cursor: pointer;
 
-    transition: color var(--auth-transition);
+    transition: color var(--auth-transition), background var(--auth-transition);
 }
 
 .password-toggle:hover {
     color: var(--auth-green);
+    background: var(--auth-green-soft);
 }
 
 .password-toggle:focus-visible {
     outline: 2px solid var(--auth-green);
     outline-offset: 2px;
-    border-radius: 5px;
 }
 
 /* ---------------------------------------------------------
-   7. Login Button
+   7. Buttons
    --------------------------------------------------------- */
 
-.login-button {
-    width: 100%;
-    height: 49px;
-
-    margin-top: 5px;
-
-    display: flex;
+.btn {
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
+    gap: 10px;
 
-    background: var(--auth-green);
-    border: 1px solid var(--auth-green);
+    border: 1px solid transparent;
+    border-radius: var(--auth-radius-sm);
 
-    border-radius: 9px;
-
-    color: #ffffff;
-
-    font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
 
     cursor: pointer;
+    user-select: none;
 
     transition:
         background var(--auth-transition),
         border-color var(--auth-transition),
         transform var(--auth-transition),
-        box-shadow var(--auth-transition);
+        box-shadow var(--auth-transition),
+        opacity var(--auth-transition);
 }
 
-.login-button:hover {
+.btn:disabled,
+.btn[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-primary {
+    background: var(--auth-green);
+    border-color: var(--auth-green);
+    color: #ffffff;
+}
+
+.btn-primary:hover {
     background: var(--auth-green-hover);
     border-color: var(--auth-green-hover);
-
-    box-shadow: 0 5px 18px rgba(39, 174, 117, 0.18);
+    box-shadow: 0 5px 18px rgba(39, 174, 117, 0.22);
 }
 
-.login-button:active {
+.btn-primary:active {
     transform: scale(0.99);
 }
 
-.login-button:focus-visible {
+.btn:focus-visible {
     outline: 3px solid rgba(39, 174, 117, 0.35);
     outline-offset: 3px;
 }
 
-.login-button i {
+.btn i {
     font-size: 13px;
 }
 
+.login-button {
+    width: 100%;
+    height: 49px;
+    margin-top: 6px;
+    font-size: 14px;
+}
+
 /* ---------------------------------------------------------
-   8. Flash Messages
+   8. Alerts / Flash Messages
    --------------------------------------------------------- */
 
 .flash-messages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
     margin-bottom: 22px;
 }
 
-.flash-message {
+.alert {
     display: flex;
     align-items: flex-start;
     gap: 10px;
 
     padding: 12px 14px;
 
+    border: 1px solid transparent;
     border-radius: 8px;
 
     font-size: 12px;
     line-height: 1.9;
 }
 
-.flash-message i {
-    margin-top: 4px;
+.alert-danger,
+.alert-error {
+    background: rgba(239, 100, 100, 0.10);
+    border-color: rgba(239, 100, 100, 0.28);
+    color: var(--alert-danger-text);
 }
 
-.flash-danger,
-.flash-error {
-    background: var(--auth-danger-bg);
-    border: 1px solid rgba(239, 100, 100, 0.25);
-    color: #ff8585;
-}
-
-.flash-success {
+.alert-success {
     background: rgba(39, 174, 117, 0.10);
-    border: 1px solid rgba(39, 174, 117, 0.25);
-    color: #55d69b;
+    border-color: rgba(39, 174, 117, 0.28);
+    color: var(--alert-success-text);
 }
 
-.flash-warning {
+.alert-warning {
     background: rgba(230, 170, 65, 0.10);
-    border: 1px solid rgba(230, 170, 65, 0.25);
-    color: #e9bd69;
+    border-color: rgba(230, 170, 65, 0.28);
+    color: var(--alert-warning-text);
 }
 
-.flash-info {
+.alert-info,
+.alert-message {
     background: rgba(90, 155, 220, 0.10);
-    border: 1px solid rgba(90, 155, 220, 0.25);
-    color: #83b8e9;
+    border-color: rgba(90, 155, 220, 0.28);
+    color: var(--alert-info-text);
+}
+
+.alert-close {
+    flex-shrink: 0;
+    margin-inline-start: auto;
+
+    background: none;
+    border: none;
+
+    color: inherit;
+    font-size: 18px;
+    line-height: 1;
+
+    cursor: pointer;
+    opacity: 0.6;
+
+    transition: opacity var(--auth-transition);
+}
+
+.alert-close:hover,
+.alert-close:focus-visible {
+    opacity: 1;
 }
 
 /* ---------------------------------------------------------
-   9. Footer
+   9. Footers
    --------------------------------------------------------- */
 
+/* Status + hints inside the login form block */
 .login-footer {
-    margin-top: 27px;
+    margin-top: 26px;
+    padding-top: 22px;
+
+    border-top: 1px solid var(--auth-border);
 
     text-align: center;
-
     color: var(--auth-muted);
-    font-size: 11px;
+    font-size: 12px;
 }
 
 .footer-status {
@@ -401,36 +607,85 @@ body.auth-body {
     background: var(--auth-green);
     border-radius: 50%;
 
-    box-shadow: 0 0 8px rgba(39, 174, 117, 0.4);
+    box-shadow: 0 0 8px rgba(39, 174, 117, 0.5);
 }
 
 .login-footer p {
-    line-height: 1.8;
+    line-height: 1.9;
 }
 
 .login-footer strong {
-    color: #d9dbe2;
+    color: var(--auth-label);
     font-weight: 700;
 }
 
+/* Copyright block at the bottom of the card */
+.auth-footer {
+    margin-top: 22px;
+
+    text-align: center;
+    color: var(--auth-muted);
+    font-size: 11px;
+    opacity: 0.85;
+}
+
+.auth-footer p {
+    line-height: 1.9;
+}
+
 /* ---------------------------------------------------------
-   10. Responsive - Tablet
+   10. Responsive - Tablet (stack, compact brand banner)
    --------------------------------------------------------- */
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
 
-    body.auth-body {
-        padding: 30px 20px;
+    .auth-page {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
     }
 
-    .auth-container {
-        max-width: 420px;
+    .auth-brand {
+        padding: 22px 24px;
     }
 
-    .login-card {
-        padding: 28px 24px;
+    .auth-brand::before,
+    .auth-brand::after {
+        display: none;
     }
 
+    .brand-content {
+        max-width: none;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+    }
+
+    .brand-logo {
+        width: 46px;
+        height: 46px;
+
+        margin-bottom: 0;
+
+        border-radius: 13px;
+        font-size: 20px;
+    }
+
+    .brand-content h1 {
+        font-size: 20px;
+        margin-bottom: 0;
+    }
+
+    .brand-content > p,
+    .brand-features {
+        display: none;
+    }
+
+    .auth-form-container {
+        align-items: flex-start;
+        padding: 32px 20px 40px;
+    }
 }
 
 /* ---------------------------------------------------------
@@ -439,53 +694,43 @@ body.auth-body {
 
 @media (max-width: 480px) {
 
-    body.auth-body {
-        padding: 24px 16px;
+    .auth-form-container {
+        padding: 24px 16px 32px;
     }
 
-    .login-brand {
-        margin-bottom: 25px;
-    }
-
-    .brand-logo {
-        width: 60px;
-        height: 60px;
-
-        font-size: 25px;
-        border-radius: 15px;
-    }
-
-    .brand-name {
-        font-size: 22px;
-    }
-
-    .brand-description {
-        font-size: 12px;
-    }
-
-    .login-card {
-        padding: 25px 19px;
+    .auth-card {
+        padding: 26px 19px 22px;
         border-radius: 13px;
     }
 
-    .login-heading h2 {
+    .auth-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .auth-header {
+        margin-bottom: 24px;
+    }
+
+    .auth-header h2 {
         font-size: 18px;
     }
 
-    .login-heading p {
-        font-size: 11px;
+    .auth-header p {
+        font-size: 12px;
     }
 
     .form-control {
         height: 47px;
-        font-size: 12px;
+        /* 16px prevents iOS Safari from zooming on focus */
+        font-size: 16px;
     }
 
     .login-button {
         height: 47px;
         font-size: 13px;
     }
-
 }
 
 /* ---------------------------------------------------------
@@ -501,65 +746,9 @@ body.auth-body {
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
     }
-
 }
 
 ::selection {
     background: rgba(39, 174, 117, 0.3);
     color: #ffffff;
-}
-
-/* ---------------------------------------------------------
-   13. Shared Button & Alert Styles
-   --------------------------------------------------------- */
-
-.btn {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    border: none;
-    border-radius: 9px;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 13px;
-    cursor: pointer;
-    transition: all var(--auth-transition);
-}
-
-.btn-primary {
-    background: var(--auth-green);
-    color: #ffffff;
-    border: 1px solid var(--auth-green);
-}
-
-.btn-primary:hover {
-    background: var(--auth-green-hover);
-    border-color: var(--auth-green-hover);
-    box-shadow: 0 5px 18px rgba(39, 174, 117, 0.18);
-}
-
-.btn-primary:active {
-    transform: scale(0.99);
-}
-
-.btn-primary i {
-    font-size: 13px;
-}
-
-/* ---------------------------------------------------------
-   14. Flash Message Close Button
-   --------------------------------------------------------- */
-
-.alert-close {
-    background: none;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    opacity: 0.6;
-    margin-left: 10px;
-}
-
-.alert-close:hover {
-    opacity: 1;
 }
