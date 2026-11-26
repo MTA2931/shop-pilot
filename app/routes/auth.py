@@ -8,7 +8,7 @@ from flask_limiter.util import get_remote_address
 from app.extensions import limiter
 from app.services.auth_service import (
     authenticate_admin,
-    change_password,
+    change_password as change_admin_password,
     validate_password,
     PasswordValidationError,
     admin_can_delete_or_deactivate,
@@ -92,7 +92,7 @@ def change_password():
             flash(str(e), "danger")
             return render_template("auth/change_password.html")
 
-        success, error = change_password(current_user, current_password, new_password)
+        success, error = change_admin_password(current_user, current_password, new_password)
         if success:
             flash("رمز عبور با موفقیت تغییر کرد.", "success")
             if current_user.must_change_password:
