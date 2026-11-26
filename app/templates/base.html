@@ -9,7 +9,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
 <body data-theme="{% if session.theme %}{{ session.theme }}{% else %}light{% endif %}">
@@ -50,8 +49,6 @@
                 <a href="{{ url_for('administrators.index') }}" class="{% if request.endpoint and request.endpoint.startswith('administrators.') %}active{% endif %}">
                     <i class="fa-solid fa-users-gear"></i>مدیریت ادمین‌ها
                 </a>
-                {% endif %}
-                {% if current_user.is_admin() %}
                 <a href="{{ url_for('logs.index') }}" class="{% if request.endpoint and request.endpoint.startswith('logs.') %}active{% endif %}">
                     <i class="fa-solid fa-file-contract"></i>لاگ‌ها
                 </a>
@@ -73,24 +70,36 @@
         <!-- Main -->
         <div class="main">
             <header class="topbar">
-                <button class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="باز کردن منو">
+                <button type="button" class="mobile-menu-toggle" id="mobileMenuBtn" aria-label="باز کردن منو">
                     <i class="fa-solid fa-bars"></i>
                 </button>
+
                 <div class="user">
                     <div class="avatar">{{ current_user.username[0]|upper if current_user.is_authenticated else 'M' }}</div>
-                    <div>
+                    <div class="user-info">
                         <b>{{ current_user.username if current_user.is_authenticated else 'مدیر' }}</b>
                         <small>{{ current_user.role_label if current_user.is_authenticated else '' }}</small>
                     </div>
                 </div>
+
                 <div class="actions">
                     <div class="search">
+                        <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="search" id="topbarSearch" placeholder="جست‌وجو..." aria-label="جست‌وجو">
                     </div>
-                    <button class="icon-btn" id="theme" aria-label="تغییر تم">
+                    <button type="button" class="icon-btn" id="theme" aria-label="تغییر تم">
+                        <i class="fa-regular fa-moon"></i>
+                    </button>
+                    <button type="button" class="icon-btn" id="userMenuBtn" aria-label="منوی کاربر">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page content: sibling of the header, NOT inside it -->
             <main class="content">
                 <div class="page-head">
-                    <div>
+                    <div class="page-head-info">
                         <h2>{% block page_title %}داشبورد{% endblock %}</h2>
                         <p>{% block page_subtitle %}{% endblock %}</p>
                     </div>
@@ -103,7 +112,7 @@
                     {% for category, message in messages %}
                     <div class="alert alert-{{ category }}">
                         {{ message }}
-                        <button class="alert-close" onclick="this.parentElement.remove()">&times;</button>
+                        <button type="button" class="alert-close" onclick="this.parentElement.remove()">&times;</button>
                     </div>
                     {% endfor %}
                 </div>
@@ -123,12 +132,3 @@
     {% block extra_js %}{% endblock %}
 </body>
 </html>
-                        <i class="fa-regular fa-moon"></i>
-                    </button>
-                    <button class="icon-btn" id="userMenuBtn" aria-label="منوی کاربر">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                </div>
-            </header>
-
-
