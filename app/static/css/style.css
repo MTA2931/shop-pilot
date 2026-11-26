@@ -1,3 +1,87 @@
+/* ==========================================================================
+   ShopPilot - Modern Design System Root Variables
+   ========================================================================== */
+
+:root {
+    --bg: #f8fafc;
+    --bg-secondary: #f1f5f9;
+    --card: #ffffff;
+    --line: #e2e8f0;
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #64748b;
+    --muted-light: #94a3b8;
+
+    --green: #059669;
+    --green-hover: #047857;
+    --green-soft: #ecfdf5;
+    --green-border: #a7f3d0;
+
+    --orange: #d97706;
+    --orange-hover: #b45309;
+    --orange-soft: #fffbeb;
+    --orange-border: #fcd34d;
+
+    --red: #dc2626;
+    --red-hover: #b91c1c;
+    --red-soft: #fef2f2;
+    --red-border: #fecaca;
+
+    --blue: #2563eb;
+    --blue-soft: #eff6ff;
+    --blue-border: #bfdbfe;
+
+    --purple: #7c3aed;
+    --purple-soft: #f5f3ff;
+
+    --sidebar: #0f172a;
+    --sidebar-hover: #1e293b;
+    --sidebar-text: #94a3b8;
+    --sidebar-active: #10b981;
+
+    --radius-sm: 6px;
+    --radius: 10px;
+    --radius-lg: 14px;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+
+    --transition: all 0.2s ease;
+}
+
+[data-theme="dark"] {
+    --bg: #0f172a;
+    --bg-secondary: #1e293b;
+    --card: #1e293b;
+    --line: #334155;
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --muted: #94a3b8;
+
+    --green-soft: #064e3b;
+    --orange-soft: #451a03;
+    --red-soft: #450a0a;
+    --blue-soft: #1e1b4b;
+
+    --sidebar: #020617;
+    --sidebar-hover: #1e293b;
+    --sidebar-active: #10b981;
+}
+
+/* --- Base Reset --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { direction: rtl; scroll-behavior: smooth; }
+body {
+    font-family: 'Vazirmatn', 'Tahoma', sans-serif;
+    background: var(--bg); color: var(--text);
+    font-size: 14px; line-height: 1.6;
+    min-height: 100vh; -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; text-decoration: none; }
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+::selection { background: var(--green); color: #ffffff; }
 /* ShopPilot - Main Stylesheet */
 :root {
     --bg: #f5f7f4; --card: #fff; --line: #e4e9e4; --text: #1a2420; --muted: #7d8781;
