@@ -37,8 +37,8 @@ class TestAuthentication:
         assert "change-password" in response.request.path
 
     def test_password_change(self, client):
-        """Password change should work and redirect to dashboard."""
-        # Login first
+        """Password change should work."""
+        # Login first (defaults to must_change_password=True)
         response = client.get("/auth/login")
         csrf_token = get_csrf_token(response.data.decode("utf-8"))
 
@@ -67,7 +67,8 @@ class TestAuthentication:
             follow_redirects=True,
         )
         assert response.status_code == 200
-        assert response.request.path == "/"
+        # After password change, must_change_password=False, so goes to profile
+        assert response.request.path == "/settings/profile"
 
     def test_dashboard_access(self, client):
         """Dashboard should be accessible after login and password change."""
