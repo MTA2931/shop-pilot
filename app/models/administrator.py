@@ -1,6 +1,7 @@
 """Administrator model with role-based access control and security tracking."""
 
 from datetime import datetime, timezone
+from flask import current_app
 from app.extensions import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -115,13 +116,8 @@ class Administrator(db.Model):
     def ensure_default_administrator(cls):
         """Create the default administrator on first initialization if none exists."""
         if cls.query.count() == 0:
-            from config import config_by_name
-            import os
-            config_name = os.environ.get("FLASK_CONFIG", "default")
-            config_class = config_by_name.get(config_name, config_by_name["default"])
-
-            default_username = getattr(config_class, "DEFAULT_ADMIN_USERNAME", "Admin")
-            default_password = getattr(config_class, "DEFAULT_ADMIN_PASSWORD", "admin123")
+            default_username = current_app.config.get("DEFAULT_ADMIN_USERNAME", "Admin")
+            default_password = current_app.config.get("DEFAULT_ADMIN_PASSWORD", "admin123")
 
             admin = cls(
                 username=default_username,
