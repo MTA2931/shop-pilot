@@ -6,51 +6,61 @@
 {% block page_subtitle %}{{ admin.username }}{% endblock %}
 
 {% block page_actions %}
-<a href="{{ url_for('administrators.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازگشت به لیست</a>
-{% endblock %}
-
-{% block content %}
-<div class="card" style="max-width: 500px; margin: 0 auto;">
-    <form method="POST" action="{{ url_for('administrators.edit', admin_id=admin.id) }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نام کاربری</label>
-            <input type="text" class="form-control" value="{{ admin.username }}" readonly style="background:var(--bg);">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نام کامل</label>
-            <input type="text" name="full_name" class="form-control" value="{{ admin.full_name or '' }}">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">ایمیل</label>
-            <input type="email" name="email" class="form-control" value="{{ admin.email or '' }}">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نقش</label>
-            <select name="role" class="form-control">
-                <option value="super_admin" {% if admin.role == 'super_admin' %}selected{% endif %}>سوپر ادمین</option>
-                <option value="admin" {% if admin.role == 'admin' %}selected{% endif %}>ادمین</option>
-                <option value="manager" {% if admin.role == 'manager' %}selected{% endif %}>مدیر</option>
-            </select>
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">فعال</label>
-            <label style="display:inline-flex; align-items:center; cursor:pointer;">
-                <input type="checkbox" name="is_active" {% if admin.is_active %}checked{% endif %} style="margin-left:8px;">
-                فعال بودن حساب
-            </label>
-        </div>
-
-        <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">
-            <i class="fa-solid fa-save"></i> به‌روزرسانی
-        </button>
-    </form>
+<div class="page-actions">
+    <a href="{{ url_for('administrators.index') }}" class="btn btn-secondary">
+        <i class="fa-solid fa-arrow-right"></i> بازگشت به لیست
+    </a>
 </div>
 {% endblock %}
 
+{% block content %}
+<div class="card form-card form-card-md">
+    <form method="POST" action="{{ url_for('administrators.edit', admin_id=admin.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+        <div class="form-grid">
+            <div class="form-group">
+                <label class="form-label" for="username">نام کاربری</label>
+                <input type="text" id="username" class="form-control input-ltr"
+                       value="{{ admin.username }}" readonly tabindex="-1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="full_name">نام کامل</label>
+                <input type="text" id="full_name" name="full_name" class="form-control"
+                       value="{{ admin.full_name or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="email">ایمیل</label>
+                <input type="email" id="email" name="email" class="form-control input-ltr"
+                       autocomplete="email"
+                       value="{{ admin.email or '' }}">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="role">نقش</label>
+                <select id="role" name="role" class="form-control">
+                    <option value="super_admin" {% if admin.role == 'super_admin' %}selected{% endif %}>سوپر ادمین</option>
+                    <option value="admin" {% if admin.role == 'admin' %}selected{% endif %}>ادمین</option>
+                    <option value="manager" {% if admin.role == 'manager' %}selected{% endif %}>مدیر</option>
+                </select>
+            </div>
+
+            <div class="form-group span-2">
+                <span class="form-label">وضعیت حساب</span>
+                <label class="form-check" for="is_active">
+                    <input type="checkbox" id="is_active" name="is_active" {% if admin.is_active %}checked{% endif %}>
+                    <span>فعال بودن حساب</span>
+                </label>
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> به‌روزرسانی
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
