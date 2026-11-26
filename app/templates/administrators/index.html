@@ -60,7 +60,7 @@
 <script>
 function toggleAdmin(id, activate) {
     if (!confirm('آیا از ' + (activate ? 'فعال‌سازی' : 'غیرفعال‌سازی') + ' این ادمین اطمینان دارید؟')) return;
-    fetch('{{ url_for('administrators.toggle') }}' + '?admin_id=' + id, {
+    fetch('/administrators/' + id + '/toggle', {
         method: 'POST',
         headers: { 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content }
     }).then(r => r.json()).then(data => {
@@ -70,7 +70,7 @@ function toggleAdmin(id, activate) {
 }
 function deleteAdmin(id) {
     if (!confirm('آیا از حذف این ادمین اطمینان دارید؟')) return;
-    fetch('{{ url_for('administrators.delete', admin_id=id) }}', {
+    fetch('/administrators/' + id + '/delete', {
         method: 'POST',
         headers: { 'X-CSRFToken': document.querySelector('meta[name="csrf-token"]').content }
     }).then(r => r.json()).then(data => {
