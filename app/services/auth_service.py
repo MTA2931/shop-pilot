@@ -44,7 +44,7 @@ def validate_password(
     if not password:
         raise PasswordValidationError("رمز عبور نمی‌تواند خالی باشد.")
 
-    min_len = current_app.config.get("PASSWORD_MIN_LENGTH", 10)
+    min_len = current_app.config.get("PASSWORD_MIN_LENGTH", 8)
     if len(password) < min_len:
         raise PasswordValidationError(
             f"رمز عبور باید حداقل {min_len} کاراکتر باشد."
