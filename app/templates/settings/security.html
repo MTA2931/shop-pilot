@@ -20,7 +20,7 @@
     <div style="background:var(--bg); border-radius:12px; padding:20px; margin-bottom:20px;">
         <h4 style="font-size:14px; margin-bottom:12px;">اطلاعات امنیت</h4>
         <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:12px; font-size:13px;">
-            <div><strong>آخرین ورود:</strong> <span>{{ current_user.last_login_at[:16] if current_user.last_login_at else '-' }}</span></div>
+            <div><strong>آخرین ورود:</strong> <span>{{ current_user.last_login_at|strftime('%Y/%m/%d %H:%M') if current_user.last_login_at else '-' }}</span></div>
             <div><strong>آخرین آی‌پی:</strong> <span>{{ current_user.last_login_ip or '-' }}</span></div>
             <div><strong>تغییر رمز الزامی:</strong> <span>{% if current_user.must_change_password %}بله{% else %}خیر{% endif %}</span></div>
             <div><strong>وضعیت حساب:</strong> <span>{% if current_user.is_active %}فعال{% else %}غیرفعال{% endif %}</span></div>
@@ -32,5 +32,6 @@
     </div>
 </div>
 {% endblock %}
+
 
 

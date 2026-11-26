@@ -41,7 +41,7 @@
 
         <div class="form-group" style="text-align: right;">
             <label class="form-label">آخرین ورود</label>
-            <input type="text" class="form-control" value="{{ current_user.last_login_at[:16] if current_user.last_login_at else '-' }}" readonly style="background:var(--bg);">
+            <input type="text" class="form-control" value="{{ current_user.last_login_at|strftime('%Y/%m/%d %H:%M') if current_user.last_login_at else '-' }}" readonly style="background:var(--bg);">
         </div>
 
         <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">
@@ -50,5 +50,6 @@
     </form>
 </div>
 {% endblock %}
+
 
 

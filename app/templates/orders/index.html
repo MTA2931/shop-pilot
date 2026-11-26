@@ -53,7 +53,7 @@
                     <td>{{ order.customer_name }}</td>
                     <td>{{ order.description or '-' }}</td>
                     <td>{{ order.total_amount }}</td>
-                    <td>{{ order.created_at[:10] if order.created_at else '-' }}</td>
+                    <td>{{ order.created_at|strftime('%Y/%m/%d') if order.created_at else '-' }}</td>
                     <td>
                         <span class="pill {% if order.status == 'completed' %}green{% elif order.status == 'processing' %}orange{% elif order.status == 'cancelled' %}red{% else %}orange{% endif %}">
                             {{ order.status_label }}
@@ -99,5 +99,6 @@
     {% endif %}
 </div>
 {% endblock %}
+
 
 

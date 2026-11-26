@@ -32,8 +32,8 @@
         <div>
             <h4 style="font-size:13px; color:var(--muted); margin-bottom:8px;">جزئیات مالی</h4>
             <p><strong>مبلغ کل:</strong> {{ order.total_amount }} تومان</p>
-            <p><strong>تاریخ ثبت:</strong> {{ order.created_at[:16] if order.created_at else '-' }}</p>
-            <p><strong>آخرین به‌روزرسانی:</strong> {{ order.updated_at[:16] if order.updated_at else '-' }}</p>
+            <p><strong>تاریخ ثبت:</strong> {{ order.created_at|strftime('%Y/%m/%d %H:%M') if order.created_at else '-' }}</p>
+            <p><strong>آخرین به‌روزرسانی:</strong> {{ order.updated_at|strftime('%Y/%m/%d %H:%M') if order.updated_at else '-' }}</p>
             {% if order.administrator_name %}<p><strong>مدیر ثبت‌کننده:</strong> {{ order.administrator_name }}</p>{% endif %}
         </div>
     </div>
@@ -44,5 +44,6 @@
     </div>
 </div>
 {% endblock %}
+
 
 

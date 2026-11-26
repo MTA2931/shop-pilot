@@ -59,7 +59,7 @@
                             {{ product.stock_quantity }}
                         </span>
                     </td>
-                    <td>{{ product.created_at[:10] if product.created_at else '-' }}</td>
+                    <td>{{ product.created_at|strftime('%Y/%m/%d') if product.created_at else '-' }}</td>
                     <td>
                         <a href="{{ url_for('products.detail', product_id=product.id) }}" class="icon-btn" title="مشاهده" style="color:var(--green);"><i class="fa-solid fa-eye"></i></a>
                         <a href="{{ url_for('products.edit', product_id=product.id) }}" class="icon-btn" title="ویرایش" style="color:var(--orange);"><i class="fa-solid fa-pen"></i></a>
@@ -94,5 +94,6 @@
     {% endif %}
 </div>
 {% endblock %}
+
 
 

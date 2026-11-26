@@ -53,7 +53,7 @@
                     <td>{{ movement.quantity_after }}</td>
                     <td>{{ movement.reason or '-' }}</td>
                     <td>{{ movement.administrator_name or '-' }}</td>
-                    <td>{{ movement.created_at[:16] if movement.created_at else '-' }}</td>
+                    <td>{{ movement.created_at|strftime('%Y/%m/%d %H:%M') if movement.created_at else '-' }}</td>
                 </tr>
                 {% else %}
                 <tr>
@@ -80,5 +80,6 @@
     {% endif %}
 </div>
 {% endblock %}
+
 
 

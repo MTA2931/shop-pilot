@@ -45,7 +45,7 @@
                     <td><span class="pill">{{ log.category_label }}</span></td>
                     <td>{{ log.description }}</td>
                     <td>{{ log.ip_address or '-' }}</td>
-                    <td>{{ log.created_at[:16] if log.created_at else '-' }}</td>
+                    <td>{{ log.created_at|strftime('%Y/%m/%d %H:%M') if log.created_at else '-' }}</td>
                 </tr>
                 {% else %}
                 <tr>
@@ -72,5 +72,6 @@
     {% endif %}
 </div>
 {% endblock %}
+
 
 
