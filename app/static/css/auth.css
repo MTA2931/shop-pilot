@@ -508,3 +508,58 @@ body.auth-body {
     background: rgba(39, 174, 117, 0.3);
     color: #ffffff;
 }
+
+/* ---------------------------------------------------------
+   13. Shared Button & Alert Styles
+   --------------------------------------------------------- */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 9px;
+    font-family: inherit;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all var(--auth-transition);
+}
+
+.btn-primary {
+    background: var(--auth-green);
+    color: #ffffff;
+    border: 1px solid var(--auth-green);
+}
+
+.btn-primary:hover {
+    background: var(--auth-green-hover);
+    border-color: var(--auth-green-hover);
+    box-shadow: 0 5px 18px rgba(39, 174, 117, 0.18);
+}
+
+.btn-primary:active {
+    transform: scale(0.99);
+}
+
+.btn-primary i {
+    font-size: 13px;
+}
+
+/* ---------------------------------------------------------
+   14. Flash Message Close Button
+   --------------------------------------------------------- */
+
+.alert-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    opacity: 0.6;
+    margin-left: 10px;
+}
+
+.alert-close:hover {
+    opacity: 1;
+}
