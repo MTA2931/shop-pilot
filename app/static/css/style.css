@@ -498,18 +498,57 @@ img, svg, video, canvas { max-width: 100%; }
     align-items: center;
     justify-content: center;
     gap: 8px;
-    border: none;
+
+    min-height: 40px;
+    padding: 0 20px;
+
+    border: 1px solid transparent;
     border-radius: var(--radius);
-    font-weight: 600;
-    font-size: 13px;
-    cursor: pointer;
-    transition: var(--transition);
+
     font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1;
+    text-decoration: none;
     white-space: nowrap;
+
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.15s ease,
+        opacity 0.2s ease;
+}
+
+.btn i,
+.btn svg {
+    flex: none;
+    font-size: 0.95em;
+    line-height: 1;
+}
+
+.btn:active:not(:disabled):not([disabled]) {
+    transform: translateY(1px) scale(0.98);
+}
+
+.btn:focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
 }
 
 .btn:disabled,
-.btn[disabled] { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+.btn[disabled],
+.btn.is-disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+    pointer-events: none;
+    box-shadow: none;
+}
 
 .btn-primary {
     background: var(--green);
