@@ -56,8 +56,8 @@
             <select name="channel" class="form-control">
                 <option value="website" {% if order_data and order_data.channel == 'website' %}selected{% endif %}>وبسایت</option>
                 <option value="instagram" {% if order_data and order_data.channel == 'instagram' %}selected{% endif %}>اینستاگرام</option>
-                <option value="phone" {% if order_data and order_data.channel == 'phone' %}selected{% endif %>>تماس تلفنی</option>
-                <option value="other" {% if order_data and order_data.channel == 'other' %}selected{% endif %>>سایر</option>
+                <option value="phone" {% if order_data and order_data.channel == 'phone' %}selected{% endif %}>تماس تلفنی</option>
+                <option value="other" {% if order_data and order_data.channel == 'other' %}selected{% endif %}>سایر</option>
             </select>
         </div>
 
@@ -77,5 +77,4 @@
     </form>
 </div>
 {% endblock %}
-
 
