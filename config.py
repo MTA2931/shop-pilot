@@ -124,7 +124,7 @@ class Config:
     # ------------------------------------------------------------------
     # Default administrator (first initialization)
     # ------------------------------------------------------------------
-    DEFAULT_ADMIN_USERNAME = os.environ.get("DEFAULT_ADMIN_USERNAME", "admin")
+    DEFAULT_ADMIN_USERNAME = os.environ.get("DEFAULT_ADMIN_USERNAME", "Admin")
     DEFAULT_ADMIN_PASSWORD = os.environ.get("DEFAULT_ADMIN_PASSWORD", "admin123")
 
 
