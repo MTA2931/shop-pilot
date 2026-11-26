@@ -42,4 +42,3 @@ def log_activity(
         user_agent=user_agent,
     )
     db.session.add(log_entry)
-    db.session.commit()
