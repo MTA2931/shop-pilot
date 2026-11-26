@@ -1,6 +1,7 @@
 """ShopPilot Flask application factory."""
 
 import os
+from datetime import datetime, timezone
 from flask import Flask, redirect, url_for, render_template, flash, g, request
 from flask_login import LoginManager, AnonymousUserMixin, current_user
 
@@ -81,6 +82,17 @@ def create_app(config_name=None):
     app.register_blueprint(administrators_bp)
     app.register_blueprint(logs_bp)
     app.register_blueprint(settings_bp)
+
+    @app.template_filter('strftime')
+    def strftime_filter(date, format='%Y/%m/%d'):
+        """Format a datetime object for display in templates."""
+        if date is None:
+            return ''
+        if isinstance(date, str):
+            return date[:10] if len(date) >= 10 else date
+        if isinstance(date, datetime):
+            return date.strftime(format)
+        return str(date)
 
     # ------------------------------------------------------------------
     # Template context processors
