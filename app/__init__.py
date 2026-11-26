@@ -99,10 +99,12 @@ def create_app(config_name=None):
     # ------------------------------------------------------------------
     @app.context_processor
     def inject_config():
+        from datetime import datetime
         return {
             "shop_name": app.config.get("SHOP_NAME", "ShopPilot"),
             "shop_title": app.config.get("SHOP_TITLE", "ShopPilot"),
             "shop_description": app.config.get("SHOP_DESCRIPTION", ""),
+            "now": datetime.now(),
         }
 
     # ------------------------------------------------------------------
