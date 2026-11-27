@@ -79,7 +79,7 @@
                 <div class="user">
                     <div class="avatar">{{ current_user.username[0]|upper if current_user.is_authenticated else 'M' }}</div>
                     <div class="user-info">
-                        <b>{{ current_user.username if current_user.is_authenticated else 'مدیر' }}</b>
+                        <b>{{ current_user.full_name if current_user.is_authenticated else 'مدیر' }}</b>
                         <small>{{ current_user.role_label if current_user.is_authenticated else '' }}</small>
                     </div>
                 </div>
