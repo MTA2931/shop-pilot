@@ -161,33 +161,156 @@
 {% block extra_js %}
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const ctx = document.getElementById('salesChart');
-    if (!ctx || typeof Chart === 'undefined') return;
+    const canvas = document.getElementById('salesChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const labels = {{ chart_labels | tojson }};
+    const values = {{ chart_data | tojson }};
+
+    const LINE = '#2e8b5e';
+    const FILL_TOP = 'rgba(46, 139, 94, 0.28)';
+    const FILL_BOTTOM = 'rgba(46, 139, 94, 0)';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
     Chart.defaults.font.family = "'Vazirmatn', Tahoma, sans-serif";
 
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: {{ chart_labels | tojson }},
-            datasets: [{
-                label: 'تعداد سفارش‌ها',
-                data: {{ chart_data | tojson }},
-                backgroundColor: '#2e8b5e',
-                borderRadius: 4,
-                maxBarThickness: 28
-            }]
+    // Theme colors come from the CSS variables, so light/dark both work
+    const css = (name) => getComputedStyle(document.body).getPropertyValue(name).trim();
+
+    // Progressive "draw" animation: points appear one after another, left to right
+    const duration = 1500;
+    const step = duration / Math.max(values.length, 1);
+
+    const previousY = (c) => c.index === 0
+        ? c.chart.scales.y.getPixelForValue(0)
+        : c.chart.getDatasetMeta(c.datasetIndex).data[c.index - 1].getProps(['y'], true).y;
+
+    const animation = reduceMotion ? false : {
+        x: {
+            type: 'number',
+            easing: 'linear',
+            duration: step,
+            from: NaN,
+            delay(c) {
+                if (c.type !== 'data' || c.xStarted) return 0;
+                c.xStarted = true;
+                return c.index * step;
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-                x: { ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 10 } },
-                y: { beginAtZero: true }
+        y: {
+            type: 'number',
+            easing: 'linear',
+            duration: step,
+            from: previousY,
+            delay(c) {
+                if (c.type !== 'data' || c.yStarted) return 0;
+                c.yStarted = true;
+                return c.index * step;
             }
         }
-    });
+    };
+
+    let chart = null;
+
+    function createChart() {
+        if (chart) return;
+
+        const grid = css('--line');
+        const muted = css('--muted');
+
+        chart = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'تعداد سفارش‌ها',
+                    data: values,
+                    borderColor: LINE,
+                    borderWidth: 3,
+                    tension: 0.35,
+                    fill: true,
+                    backgroundColor(c) {
+                        const area = c.chart.chartArea;
+                        if (!area) return FILL_TOP;
+                        const g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+                        g.addColorStop(0, FILL_TOP);
+                        g.addColorStop(1, FILL_BOTTOM);
+                        return g;
+                    },
+                    // vertices (points)
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    pointBorderWidth: 2,
+                    pointBorderColor: LINE,
+                    pointBackgroundColor: css('--card'),
+                    pointHoverBackgroundColor: LINE,
+                    pointHoverBorderColor: css('--card'),
+                    pointHitRadius: 14
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: animation,
+                interaction: { mode: 'index', intersect: false },
+                layout: { padding: { top: 8, right: 8 } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        rtl: true,
+                        textDirection: 'rtl',
+                        displayColors: false,
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: {
+                            label: (item) => item.parsed.y + ' سفارش'
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        // vertical lines through each point; set display:false to hide them
+                        grid: { display: true, color: grid, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10, padding: 8 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: grid, drawTicks: false },
+                        border: { display: false, dash: [4, 4] },
+                        ticks: { color: muted, precision: 0, padding: 8 }
+                    }
+                }
+            }
+        });
+    }
+
+    // Keep chart colors in sync when the theme toggle is used
+    new MutationObserver(function () {
+        if (!chart) return;
+        const grid = css('--line');
+        const muted = css('--muted');
+        chart.options.scales.x.grid.color = grid;
+        chart.options.scales.y.grid.color = grid;
+        chart.options.scales.x.ticks.color = muted;
+        chart.options.scales.y.ticks.color = muted;
+        chart.data.datasets[0].pointBackgroundColor = css('--card');
+        chart.data.datasets[0].pointHoverBorderColor = css('--card');
+        chart.update('none');
+    }).observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // Play the appearance animation when the chart scrolls into view
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) {
+                createChart();
+                io.disconnect();
+            }
+        }, { threshold: 0.3 });
+        io.observe(canvas);
+    } else {
+        createChart();
+    }
 });
 </script>
 {% endblock %}

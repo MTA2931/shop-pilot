@@ -6,50 +6,66 @@
 {% block page_subtitle %}مدیریت اطلاعات شخصی{% endblock %}
 
 {% block page_actions %}
-<a href="{{ url_for('settings.change_password_settings') }}" class="btn">تغییر رمز عبور</a>
-{% endblock %}
-
-{% block content %}
-<div class="card" style="max-width: 500px; margin: 0 auto;">
-    <form method="POST" action="{{ url_for('settings.profile') }}">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نام کاربری</label>
-            <input type="text" class="form-control" value="{{ current_user.username }}" readonly style="background:var(--bg);">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نام کامل</label>
-            <input type="text" name="full_name" class="form-control" value="{{ current_user.full_name or '' }}">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">ایمیل</label>
-            <input type="email" name="email" class="form-control" value="{{ current_user.email or '' }}">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">نقش</label>
-            <input type="text" class="form-control" value="{{ current_user.role_label }}" readonly style="background:var(--bg);">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">وضعیت</label>
-            <input type="text" class="form-control" value="{% if current_user.is_active %}فعال{% else %}غیرفعال{% endif %}" readonly style="background:var(--bg);">
-        </div>
-
-        <div class="form-group" style="text-align: right;">
-            <label class="form-label">آخرین ورود</label>
-            <input type="text" class="form-control" value="{{ current_user.last_login_at|strftime('%Y/%m/%d %H:%M') if current_user.last_login_at else '-' }}" readonly style="background:var(--bg);">
-        </div>
-
-        <button type="submit" class="btn" style="width: 100%; margin-top: 12px;">
-            <i class="fa-solid fa-save"></i> به‌روزرسانی پروفایل
-        </button>
-    </form>
+<div class="page-actions">
+    <a href="{{ url_for('settings.change_password_settings') }}" class="btn btn-secondary">
+        <i class="fa-solid fa-key"></i> تغییر رمز عبور
+    </a>
 </div>
 {% endblock %}
 
+{% block content %}
+<div class="card form-card form-card-md">
+    <form method="POST" action="{{ url_for('settings.profile') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
+        <div class="form-grid">
+            <!-- Editable fields -->
+            <div class="form-group">
+                <label class="form-label" for="full_name">نام کامل</label>
+                <input type="text" id="full_name" name="full_name" class="form-control"
+                       autocomplete="name"
+                       value="{{ current_user.full_name or '' }}">
+            </div>
 
+            <div class="form-group">
+                <label class="form-label" for="email">ایمیل</label>
+                <input type="email" id="email" name="email" class="form-control input-ltr"
+                       autocomplete="email"
+                       value="{{ current_user.email or '' }}">
+            </div>
+
+            <!-- Read-only info -->
+            <div class="form-group">
+                <label class="form-label" for="username">نام کاربری</label>
+                <input type="text" id="username" class="form-control input-ltr"
+                       value="{{ current_user.username }}" readonly tabindex="-1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="role">نقش</label>
+                <input type="text" id="role" class="form-control"
+                       value="{{ current_user.role_label }}" readonly tabindex="-1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="status">وضعیت</label>
+                <input type="text" id="status" class="form-control"
+                       value="{% if current_user.is_active %}فعال{% else %}غیرفعال{% endif %}" readonly tabindex="-1">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="last_login">آخرین ورود</label>
+                <input type="text" id="last_login" class="form-control input-ltr"
+                       value="{{ current_user.last_login_at|strftime('%Y/%m/%d %H:%M') if current_user.last_login_at else '-' }}"
+                       readonly tabindex="-1">
+            </div>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i> به‌روزرسانی پروفایل
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}
