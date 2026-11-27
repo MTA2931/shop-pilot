@@ -27,7 +27,7 @@ class ReportService:
         )
         return [
             {
-                "date": r.date.isoformat() if r.date else None,
+                "date": r.date if r.date else None,
                 "order_count": r.order_count,
                 "total_amount": r.total_amount,
             }
