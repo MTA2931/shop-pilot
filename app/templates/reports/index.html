@@ -5,73 +5,169 @@
 {% block page_title %}گزارش‌ها{% endblock %}
 {% block page_subtitle %}تحلیل و گزارش‌های فروشگاه{% endblock %}
 
-{% block page_actions %}{% endblock %}
-
 {% block content %}
-<div class="card" style="margin-bottom:24px;">
-    <form method="GET" action="{{ url_for('reports.index') }}" style="display:flex; gap:12px; flex-wrap:wrap; align-items:end;">
-        <label style="font-size:13px; font-weight:500;">از تاریخ:</label>
-        <input type="date" name="date_from" value="{{ date_from }}" class="form-control" style="width:140px;">
-        <label style="font-size:13px; font-weight:500;">تا تاریخ:</label>
-        <input type="date" name="date_to" value="{{ date_to }}" class="form-control" style="width:140px;">
-        <button type="submit" class="btn">نمایش گزارش</button>
-        <a href="{{ url_for('reports.index') }}" class="btn" style="background:var(--line); color:var(--text);">بازنشانی</a>
-    </form>
-</div>
 
+<!-- ===== Filters ===== -->
+<section class="card filter-card">
+    <form method="GET" action="{{ url_for('reports.index') }}" id="reportFilter">
+        <div class="filter-bar">
+            <div class="filter-field">
+                <label class="form-label" for="date_from">از تاریخ</label>
+                <input type="date" id="date_from" name="date_from" class="form-control input-ltr"
+                       value="{{ date_from or '' }}">
+            </div>
+
+            <div class="filter-field">
+                <label class="form-label" for="date_to">تا تاریخ</label>
+                <input type="date" id="date_to" name="date_to" class="form-control input-ltr"
+                       value="{{ date_to or '' }}">
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-magnifying-glass-chart"></i> نمایش گزارش
+                </button>
+                <a href="{{ url_for('reports.index') }}" class="btn btn-secondary">
+                    <i class="fa-solid fa-rotate-right"></i> بازنشانی
+                </a>
+            </div>
+        </div>
+
+        <div class="quick-ranges" aria-label="بازه‌های سریع">
+            <span class="quick-label">بازهٔ سریع:</span>
+            <button type="button" class="chip" data-range="7">۷ روز اخیر</button>
+            <button type="button" class="chip" data-range="30">۳۰ روز اخیر</button>
+            <button type="button" class="chip" data-range="90">۹۰ روز اخیر</button>
+        </div>
+    </form>
+</section>
+
+<!-- ===== Key numbers ===== -->
 <section class="stats">
-    <article class="card" style="padding:16px;">
-        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-cart-shopping"></i></div><span>کل سفارش‌ها</span></div>
-        <div class="stat-val"><strong>{{ performance_data.total_orders }}</strong><small>سفارش</small></div>
+    <article class="stat-card">
+        <div class="stat-head">
+            <div class="stat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+            <span class="stat-label">کل سفارش‌ها</span>
+        </div>
+        <div class="stat-value"><strong>{{ performance_data.total_orders }}</strong><small>سفارش</small></div>
     </article>
-    <article class="card" style="padding:16px;">
-        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-check-double"></i></div><span>تکمیل‌شده‌ها</span></div>
-        <div class="stat-val"><strong>{{ performance_data.completed_orders }}</strong><small>سفارش</small></div>
+
+    <article class="stat-card">
+        <div class="stat-head">
+            <div class="stat-icon"><i class="fa-solid fa-check-double"></i></div>
+            <span class="stat-label">تکمیل‌شده‌ها</span>
+        </div>
+        <div class="stat-value"><strong>{{ performance_data.completed_orders }}</strong><small>سفارش</small></div>
     </article>
-    <article class="card" style="padding:16px;">
-        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-money-bill"></i></div><span>فروش کل</span></div>
-        <div class="stat-val"><strong>{{ performance_data.total_revenue }}</strong><small>تومان</small></div>
+
+    <article class="stat-card">
+        <div class="stat-head">
+            <div class="stat-icon blue"><i class="fa-solid fa-money-bill"></i></div>
+            <span class="stat-label">فروش کل</span>
+        </div>
+        <div class="stat-value"><strong>{{ performance_data.total_revenue }}</strong><small>تومان</small></div>
     </article>
-    <article class="card" style="padding:16px;">
-        <div class="stat-head"><div class="stat-ico"><i class="fa-solid fa-percent"></i></div><span>نرخ تکمیل</span></div>
-        <div class="stat-val"><strong>{{ performance_data.conversion_rate }}%</strong><small>تبدیل</small></div>
+
+    <article class="stat-card">
+        <div class="stat-head">
+            <div class="stat-icon purple"><i class="fa-solid fa-percent"></i></div>
+            <span class="stat-label">نرخ تکمیل</span>
+        </div>
+        <div class="stat-value"><strong>{{ performance_data.conversion_rate }}%</strong><small>از کل سفارش‌ها</small></div>
     </article>
 </section>
 
+<!-- ===== Sales trend + order status ===== -->
 <section class="row two">
     <article class="card">
-        <div class="card-head"><h3>روند فروش</h3></div>
-        <div style="height:300px;">
+        <div class="card-head">
+            <div>
+                <h3>روند فروش</h3>
+                {% if date_from or date_to %}
+                <p>بازهٔ انتخاب‌شده: {{ date_from or '…' }} تا {{ date_to or '…' }}</p>
+                {% else %}
+                <p>تعداد سفارش‌ها در بازهٔ گزارش</p>
+                {% endif %}
+            </div>
+        </div>
+
+        {% if sales_labels %}
+        <div class="chart-box">
             <canvas id="salesChart"></canvas>
         </div>
+        {% else %}
+        <div class="stock-empty">
+            <i class="fa-solid fa-chart-line"></i>
+            <span>برای این بازه داده‌ای ثبت نشده است.</span>
+        </div>
+        {% endif %}
     </article>
 
     <article class="card">
-        <div class="card-head"><h3>وضعیت سفارش‌ها</h3></div>
-        <div style="height:300px; display:flex; flex-direction:column; gap:12px; padding:20px;">
-            {% for item in order_data %}
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span>{{ item.status_label }}</span>
-                <span>{{ item.count }} سفارش · {{ item.total_amount }} تومان</span>
+        <div class="card-head">
+            <div>
+                <h3>وضعیت سفارش‌ها</h3>
+                <p>سهم هر وضعیت از کل سفارش‌ها</p>
             </div>
-            {% else %}
-            <div style="text-align:center; color:var(--muted);">داده‌ای ثبت نشده است.</div>
-            {% endfor %}
         </div>
+
+        {% set orders_total = order_data | sum(attribute='count') %}
+
+        {% if order_data %}
+        <ul class="status-list">
+            {% for item in order_data %}
+            {% set pct = ((item.count / orders_total * 100) | round | int) if orders_total else 0 %}
+            {% set tone = 'green' if item.status == 'completed' else ('red' if item.status == 'cancelled' else 'orange') %}
+            <li class="status-row">
+                <div class="status-top">
+                    <span class="status-name"><span class="tone tone-{{ tone }}"></span>{{ item.status_label }}</span>
+                    <span class="status-pct">{{ pct }}%</span>
+                </div>
+                <div class="status-bar" role="img" aria-label="{{ pct }} درصد">
+                    <span class="tone-{{ tone }}" style="width: {{ pct }}%"></span>
+                </div>
+                <div class="status-meta">{{ item.count }} سفارش · {{ item.total_amount }} تومان</div>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="stock-empty">
+            <i class="fa-solid fa-inbox"></i>
+            <span>داده‌ای ثبت نشده است.</span>
+        </div>
+        {% endif %}
     </article>
 </section>
 
+<!-- ===== Products report + inventory summary ===== -->
 <section class="row two">
     <article class="card">
-        <div class="card-head"><h3>گزارش محصولات</h3></div>
+        <div class="card-head">
+            <div>
+                <h3>گزارش محصولات</h3>
+                <p>تفکیک بر اساس دسته‌بندی</p>
+            </div>
+        </div>
         <div class="table-wrap">
             <table>
-                <thead><tr><th>دسته‌بندی</th><th>تعداد محصول</th><th>موجودی کل</th><th>ارزش کل</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>دسته‌بندی</th>
+                        <th>تعداد محصول</th>
+                        <th>موجودی کل</th>
+                        <th>ارزش کل</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for item in product_data %}
-                    <tr><td>{{ item.category }}</td><td>{{ item.product_count }}</td><td>{{ item.total_stock }}</td><td>{{ item.total_value }}</td></tr>
+                    <tr>
+                        <td>{{ item.category }}</td>
+                        <td>{{ item.product_count }}</td>
+                        <td>{{ item.total_stock }}</td>
+                        <td>{{ item.total_value }}</td>
+                    </tr>
                     {% else %}
-                    <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">داده‌ای ثبت نشده است.</td></tr>
+                    <tr><td colspan="4" class="td-empty">داده‌ای ثبت نشده است.</td></tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -79,42 +175,210 @@
     </article>
 
     <article class="card">
-        <div class="card-head"><h3>خلاصه موجودی انبار</h3></div>
-        <div class="stats" style="margin-top:20px;">
-            <article class="card" style="padding:12px;"><div class="stat-head"><span>کل کالا</span></div><div class="stat-val"><strong>{{ inventory_data.total_items }}</strong></div></article>
-            <article class="card" style="padding:12px;"><div class="stat-head"><span>مقدار کل</span></div><div class="stat-val"><strong>{{ inventory_data.total_quantity }}</strong></div></article>
-            <article class="card" style="padding:12px;"><div class="stat-head"><span>محدود موجودی</span></div><div class="stat-val"><strong>{{ inventory_data.low_stock }}</strong></div></article>
-            <article class="card" style="padding:12px;"><div class="stat-head"><span>ناموجود</span></div><div class="stat-val"><strong>{{ inventory_data.out_of_stock }}</strong></div></article>
+        <div class="card-head">
+            <div>
+                <h3>خلاصه موجودی انبار</h3>
+                <p>وضعیت فعلی کالاها</p>
+            </div>
+            <a class="link" href="{{ url_for('inventory.index') }}">مدیریت انبار</a>
+        </div>
+
+        <div class="mini-stats">
+            <div class="mini-stat">
+                <span class="mini-label">کل کالا</span>
+                <strong>{{ inventory_data.total_items }}</strong>
+            </div>
+            <div class="mini-stat">
+                <span class="mini-label">مقدار کل</span>
+                <strong>{{ inventory_data.total_quantity }}</strong>
+            </div>
+            <div class="mini-stat warn">
+                <span class="mini-label">محدود موجودی</span>
+                <strong>{{ inventory_data.low_stock }}</strong>
+            </div>
+            <div class="mini-stat danger">
+                <span class="mini-label">ناموجود</span>
+                <strong>{{ inventory_data.out_of_stock }}</strong>
+            </div>
         </div>
     </article>
 </section>
 
+{% endblock %}
+
+{% block extra_js %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const ctx = document.getElementById('salesChart');
-    if (ctx) {
-        new Chart(ctx, {
+document.addEventListener('DOMContentLoaded', function () {
+
+    /* ---------- Filter: quick ranges + date sanity ---------- */
+    const form = document.getElementById('reportFilter');
+    const dateFrom = document.getElementById('date_from');
+    const dateTo = document.getElementById('date_to');
+
+    const toISO = (d) =>
+        d.getFullYear() + '-' +
+        String(d.getMonth() + 1).padStart(2, '0') + '-' +
+        String(d.getDate()).padStart(2, '0');
+
+    function syncLimits() {
+        dateTo.min = dateFrom.value || '';
+        dateFrom.max = dateTo.value || '';
+    }
+    syncLimits();
+    dateFrom.addEventListener('change', syncLimits);
+    dateTo.addEventListener('change', syncLimits);
+
+    document.querySelectorAll('.chip[data-range]').forEach(function (chip) {
+        chip.addEventListener('click', function () {
+            const days = parseInt(chip.dataset.range, 10);
+            const to = new Date();
+            const from = new Date();
+            from.setDate(to.getDate() - days + 1);
+            dateFrom.value = toISO(from);
+            dateTo.value = toISO(to);
+            form.submit();
+        });
+    });
+
+    /* ---------- Sales line chart ---------- */
+    const canvas = document.getElementById('salesChart');
+    if (!canvas || typeof Chart === 'undefined') return;
+
+    const labels = {{ sales_labels | tojson }};
+    const values = {{ sales_counts | tojson }};
+
+    const LINE = '#2e8b5e';
+    const FILL_TOP = 'rgba(46, 139, 94, 0.28)';
+    const FILL_BOTTOM = 'rgba(46, 139, 94, 0)';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    Chart.defaults.font.family = "'Vazirmatn', Tahoma, sans-serif";
+
+    const css = (name) => getComputedStyle(document.body).getPropertyValue(name).trim();
+
+    // Points appear one after another, left to right
+    const duration = 1500;
+    const step = duration / Math.max(values.length, 1);
+
+    const previousY = (c) => c.index === 0
+        ? c.chart.scales.y.getPixelForValue(0)
+        : c.chart.getDatasetMeta(c.datasetIndex).data[c.index - 1].getProps(['y'], true).y;
+
+    const animation = reduceMotion ? false : {
+        x: {
+            type: 'number', easing: 'linear', duration: step, from: NaN,
+            delay(c) {
+                if (c.type !== 'data' || c.xStarted) return 0;
+                c.xStarted = true;
+                return c.index * step;
+            }
+        },
+        y: {
+            type: 'number', easing: 'linear', duration: step, from: previousY,
+            delay(c) {
+                if (c.type !== 'data' || c.yStarted) return 0;
+                c.yStarted = true;
+                return c.index * step;
+            }
+        }
+    };
+
+    let chart = null;
+
+    function createChart() {
+        if (chart) return;
+        const grid = css('--line');
+        const muted = css('--muted');
+
+        chart = new Chart(canvas, {
             type: 'line',
             data: {
-                labels: {{ sales_labels | tojson | safe }},
+                labels: labels,
                 datasets: [{
                     label: 'تعداد سفارش‌ها',
-                    data: {{ sales_counts | tojson | safe }},
-                    borderColor: '#2e8b5e',
-                    backgroundColor: 'rgba(46, 139, 94, 0.1)',
+                    data: values,
+                    borderColor: LINE,
+                    borderWidth: 3,
+                    tension: 0.35,
                     fill: true,
-                    tension: 0.3
+                    backgroundColor(c) {
+                        const area = c.chart.chartArea;
+                        if (!area) return FILL_TOP;
+                        const g = c.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+                        g.addColorStop(0, FILL_TOP);
+                        g.addColorStop(1, FILL_BOTTOM);
+                        return g;
+                    },
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    pointBorderWidth: 2,
+                    pointBorderColor: LINE,
+                    pointBackgroundColor: css('--card'),
+                    pointHoverBackgroundColor: LINE,
+                    pointHoverBorderColor: css('--card'),
+                    pointHitRadius: 14
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                plugins: { legend: { display: false } }
+                animation: animation,
+                interaction: { mode: 'index', intersect: false },
+                layout: { padding: { top: 8, right: 8 } },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        rtl: true,
+                        textDirection: 'rtl',
+                        displayColors: false,
+                        padding: 10,
+                        cornerRadius: 8,
+                        callbacks: { label: (item) => item.parsed.y + ' سفارش' }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { display: true, color: grid, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: muted, maxRotation: 0, autoSkip: true, maxTicksLimit: 10, padding: 8 }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: { color: grid, drawTicks: false },
+                        border: { display: false },
+                        ticks: { color: muted, precision: 0, padding: 8 }
+                    }
+                }
             }
         });
+    }
+
+    // Keep colors in sync with the theme toggle
+    new MutationObserver(function () {
+        if (!chart) return;
+        const grid = css('--line');
+        const muted = css('--muted');
+        chart.options.scales.x.grid.color = grid;
+        chart.options.scales.y.grid.color = grid;
+        chart.options.scales.x.ticks.color = muted;
+        chart.options.scales.y.ticks.color = muted;
+        chart.data.datasets[0].pointBackgroundColor = css('--card');
+        chart.data.datasets[0].pointHoverBorderColor = css('--card');
+        chart.update('none');
+    }).observe(document.body, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // Animate when the chart scrolls into view
+    if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(function (entries) {
+            if (entries[0].isIntersecting) {
+                createChart();
+                io.disconnect();
+            }
+        }, { threshold: 0.3 });
+        io.observe(canvas);
+    } else {
+        createChart();
     }
 });
 </script>
 {% endblock %}
-
-
