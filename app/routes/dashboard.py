@@ -8,6 +8,8 @@ from app.services.product_service import ProductService
 from app.services.inventory_service import InventoryService
 from app.models.order import Order
 
+from datetime import date
+
 dashboard_bp = Blueprint("dashboard", __name__)
 
 
@@ -31,7 +33,16 @@ def index():
     chart_labels = []
     chart_data = []
     for row in sales_by_date:
-        chart_labels.append(row.date.strftime("%m/%d") if row.date else "")
+        if row.date:
+            if isinstance(row.date, str):
+                parsed_date = date.fromisoformat(row.date)
+            else:
+                parsed_date = row.date
+
+            chart_labels.append(parsed_date.strftime("%m/%d"))
+        else:
+            chart_labels.append("")
+
         chart_data.append(row.count)
 
     return render_template(
