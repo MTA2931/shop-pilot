@@ -1021,6 +1021,16 @@ tbody tr:last-child td { border-bottom: 0; }
     cursor: not-allowed;
 }
 
+.form-grid + .form-actions {
+    padding-top: 20px;
+    border-top: 1px solid var(--line);
+}
+
+.form-grid + .form-actions .btn {
+    flex: 1;
+    width: 100%;
+}
+
 .form-card-md { max-width: 720px; }
 
 .input-ltr {
